@@ -1,2 +1,4 @@
-package com.example.ebshop.dto;public class BookDTO {
+package com.example.ebshop.dto;
+
+public class BookDTO {
 }
