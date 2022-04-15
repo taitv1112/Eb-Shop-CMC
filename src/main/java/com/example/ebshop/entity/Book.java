@@ -1,7 +1,6 @@
 package com.example.ebshop.entity;
 
 import lombok.Data;
-
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -22,7 +21,4 @@ public class Book {
     private String status;
     private Long quantityCurrent;
     private Long quantitySold;
-
-
-
 }

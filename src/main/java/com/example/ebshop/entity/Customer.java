@@ -1,7 +1,6 @@
 package com.example.ebshop.entity;
 
 import lombok.Data;
-
 import javax.persistence.*;
 
 @Entity
@@ -9,9 +8,9 @@ import javax.persistence.*;
 public class Customer {
     @Id
     @Column(length = 254)
-    private String id ;
+    private String id;
     private String email;
     private String phone;
     private String name;
-    private  String address;
+    private String address;
 }
