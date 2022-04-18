@@ -5,8 +5,8 @@ import com.example.ebshop.entity.Book;
 import java.util.List;
 
 public interface IBookService {
-    List<Book> findAll();
+    List<Book> findAllBookByStatus();
     Book save(Book book);
-    void delete(String id);
+    void deleteBookById(String id);
     Book findById(String id);
 }

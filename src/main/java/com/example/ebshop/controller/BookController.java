@@ -1,6 +1,7 @@
 package com.example.ebshop.controller;
 
 import com.example.ebshop.entity.Book;
+import com.example.ebshop.exception.ApiRequestException;
 import com.example.ebshop.service.IBookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,14 +12,14 @@ import java.util.List;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/home")
+@RequestMapping("/book")
 public class BookController {
     @Autowired
     IBookService bookService;
 
-    @GetMapping("/book")
-    public ResponseEntity<List<Book>> findAllCategory(){
-        return new ResponseEntity<>(bookService.findAll(), HttpStatus.OK);
+    @GetMapping()
+    public List<Book> findAllBook(){
+        return bookService.findAllBookByStatus();
     }
 
     @PostMapping
@@ -26,8 +27,13 @@ public class BookController {
         return new ResponseEntity<>(bookService.save(book),HttpStatus.OK);
     }
 
-    @DeleteMapping
+    @DeleteMapping ("/{id}")
     public void delete(@PathVariable String id){
+        bookService.deleteBookById(id);
+    }
 
+    @PutMapping
+    public ResponseEntity<Book> edit(@RequestBody Book book){
+        return new ResponseEntity<>(bookService.save(book),HttpStatus.OK);
     }
 }
