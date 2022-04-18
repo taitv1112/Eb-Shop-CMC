@@ -6,4 +6,5 @@ import org.springframework.http.ResponseEntity;
 public interface PublisherService {
     ResponseEntity<String> save(Publisher publisher);
     ResponseEntity<?> findById(String id);
+    ResponseEntity<String> update(Publisher publisher);
 }

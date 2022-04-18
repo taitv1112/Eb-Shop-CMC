@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/")
+@RequestMapping("/publisher")
 public class PublisherController {
     @Autowired
     PublisherService publisherService;
@@ -16,5 +16,15 @@ public class PublisherController {
     @PostMapping("/save")
     public ResponseEntity<String> savePublisher(@RequestBody Publisher publisher){
         return publisherService.save(publisher);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getPublisher(@PathVariable String id){
+        return publisherService.findById(id);
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<String> updatePublisher(@RequestBody Publisher publisher){
+        return publisherService.update(publisher);
     }
 }
