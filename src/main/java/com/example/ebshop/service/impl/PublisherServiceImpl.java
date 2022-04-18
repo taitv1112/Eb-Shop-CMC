@@ -1,6 +1,8 @@
 package com.example.ebshop.service.impl;
 
+import com.example.ebshop.dto.response.PublisherAndBookDTO;
 import com.example.ebshop.dto.response.PublisherDTO;
+import com.example.ebshop.dto.response.TopSellingBooks;
 import com.example.ebshop.entity.Publisher;
 import com.example.ebshop.repository.PublisherRepository;
 import com.example.ebshop.service.BookService;
@@ -10,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
+
+import java.util.List;
 
 @Service
 public class PublisherServiceImpl implements PublisherService {
@@ -32,15 +36,22 @@ public class PublisherServiceImpl implements PublisherService {
     @Override
     public ResponseEntity<?> findById(String id) {
         PublisherDTO publisher = publisherRepository.findPublisherById(PublisherDTO.class,id);
+        PublisherAndBookDTO publisherAndBookDTO = new PublisherAndBookDTO();
+        publisherAndBookDTO.setPublisherDTO(publisher);
         if(ObjectUtils.isEmpty(publisher)) return ResponseEntity.status(HttpStatus.OK).body("Not found!");
-        return new ResponseEntity<>(publisher, HttpStatus.OK);
+        List<TopSellingBooks> bookDTO = bookService.find5BestSellingBook(publisher);
+        publisherAndBookDTO.setTopSellingBooks(bookDTO);
+        Long count = bookService.getCountOfBookByPublisherId(publisher.getId());
+        publisherAndBookDTO.setCount(count);
+        return new ResponseEntity<>(publisherAndBookDTO, HttpStatus.OK);
     }
 
     //Update NXB
     @Override
     public ResponseEntity<String> update(Publisher publisher) {
+        if(publisher.getId()==null) return ResponseEntity.status(HttpStatus.OK).body("Not found id!");
         PublisherDTO publisherDTO = publisherRepository.findPublisherById(PublisherDTO.class, publisher.getId());
-        if(ObjectUtils.isEmpty(publisherDTO)) return ResponseEntity.status(HttpStatus.OK).body("Not found!");
+        if(ObjectUtils.isEmpty(publisherDTO)) return ResponseEntity.status(HttpStatus.OK).body("Not found publisher!");
         if(publisher.getName()==null){
             publisher.setName(publisherDTO.getName());
         }

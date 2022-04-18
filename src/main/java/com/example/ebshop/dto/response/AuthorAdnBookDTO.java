@@ -8,6 +8,6 @@ import java.util.List;
 @Data
 public class AuthorAdnBookDTO {
     private AuthorDTO author;
-    private List<ThreeMostSellBookDTO> book;
+    private List<TopSellingBooks> book;
     private Long numberOfBooks;
 }

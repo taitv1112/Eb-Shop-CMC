@@ -2,7 +2,7 @@ package com.example.ebshop.service.impl;
 
 import com.example.ebshop.dto.request.AuthorDTO;
 import com.example.ebshop.dto.response.AuthorAdnBookDTO;
-import com.example.ebshop.dto.response.ThreeMostSellBookDTO;
+import com.example.ebshop.dto.response.TopSellingBooks;
 import com.example.ebshop.entity.Author;
 import com.example.ebshop.repository.AuthorRepository;
 import com.example.ebshop.service.AuthorService;
@@ -39,7 +39,7 @@ public class AuthorServiceImpl implements AuthorService {
         if(ObjectUtils.isEmpty(authorRepository.findById(id))) return ResponseEntity.status(HttpStatus.OK).body("Author is not exist!");
         AuthorDTO authorDTO = authorRepository.findAuthorById(AuthorDTO.class,id);
         AuthorAdnBookDTO authorAdnBookDTO = new AuthorAdnBookDTO();
-        List<ThreeMostSellBookDTO> book = bookService.find3MostSoldBook(authorDTO.getId());
+        List<TopSellingBooks> book = bookService.find3MostSoldBook(authorDTO.getId());
         authorAdnBookDTO.setAuthor(authorDTO);
         authorAdnBookDTO.setBook(book);
         authorAdnBookDTO.setNumberOfBooks(bookService.getNumberOfBooks(authorDTO));

@@ -4,7 +4,7 @@ import com.example.ebshop.dto.request.AuthorDTO;
 import com.example.ebshop.dto.request.BookQuantityDTO;
 import com.example.ebshop.dto.request.SavedBookDTO;
 import com.example.ebshop.dto.response.PublisherDTO;
-import com.example.ebshop.dto.response.ThreeMostSellBookDTO;
+import com.example.ebshop.dto.response.TopSellingBooks;
 import com.example.ebshop.dto.response.UpdatedBookDTO;
 import com.example.ebshop.entity.Book;
 import com.example.ebshop.repository.BookRepository;
@@ -135,8 +135,8 @@ public class BookServiceImpl implements BookService {
 
     // Lấy ra 3 cuốn sách bán chạy nhất
     @Override
-    public List<ThreeMostSellBookDTO> find3MostSoldBook(String id) {
-        return bookRepository.find3MostSoldBook(ThreeMostSellBookDTO.class,id);
+    public List<TopSellingBooks> find3MostSoldBook(String id) {
+        return bookRepository.find3MostSoldBook(TopSellingBooks.class,id);
     }
 
     //Lấy ra số lượng sách
@@ -145,6 +145,7 @@ public class BookServiceImpl implements BookService {
         return bookRepository.countByAuthor(authorDTO.getId());
     }
 
+    //Lấy ra số lượng sách
     @Override
     public boolean checkQuantity(String id) {
         List<BookQuantityDTO> quantity = bookRepository.findQuantityById(BookQuantityDTO.class,id);
@@ -155,8 +156,21 @@ public class BookServiceImpl implements BookService {
         return false;
     }
 
+    //Xóa NXB khỏi sách
     @Override
     public void removePublisher(String id) {
         bookRepository.removePublisher(id);
+    }
+
+    //Lấy ra 5 thằng bán chạy nhất tại NXB
+    @Override
+    public List<TopSellingBooks> find5BestSellingBook(PublisherDTO publisher) {
+        return bookRepository.find5BestSellingBook(TopSellingBooks.class,publisher.getId());
+    }
+
+    //Đếm số sách của NXB
+    @Override
+    public Long getCountOfBookByPublisherId(String id) {
+        return bookRepository.countByPublisherId(id);
     }
 }

@@ -1,6 +1,7 @@
 package com.example.ebshop.repository;
 
 import com.example.ebshop.dto.response.PublisherDTO;
+import com.example.ebshop.dto.response.TopSellingBooks;
 import com.example.ebshop.entity.Book;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -35,4 +36,10 @@ public interface BookRepository extends JpaRepository<Book,String> {
     @Transactional
     @Query("update Book b set b.publisher = null where b.publisher.id=?1")
     void removePublisher(String id);
+
+    @Query(nativeQuery = true,value = "select name,id from book where publisher_id = ?1 limit 5")
+    <T>List<T> find5BestSellingBook(Class<T> classType, String id);
+
+    @Query("select count(id) from Book where publisher.id=?1")
+    Long countByPublisherId(String id);
 }
