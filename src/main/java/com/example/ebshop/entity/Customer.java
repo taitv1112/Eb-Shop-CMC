@@ -8,9 +8,16 @@ import javax.persistence.*;
 public class Customer {
     @Id
     @Column(length = 254)
-    private String id;
     private String email;
-    private String phone;
     private String name;
-    private String address;
+    private String phone;
+
+    public Customer() {
+    }
+
+    public Customer(String email, String name, String phone) {
+        this.email = email;
+        this.name = name;
+        this.phone = phone;
+    }
 }
