@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("")
+@RequestMapping("/book")
 public class BookController {
     @Autowired
     IBookService bookSvc;
@@ -28,9 +28,18 @@ public class BookController {
     }
 
     //Tìm sách theo Id sách
-    @GetMapping("/book/{id}")
+    @GetMapping("//{id}")
     public ResponseEntity<BookGotByIdToUpdate> getBookById(@PathVariable String id){
-        return new ResponseEntity<>(bookSvc.getBookByIdToUpdate(id),HttpStatus.OK);
+        BookGotByIdToUpdate book = bookSvc.getBookByIdToUpdate(id);
+        if(book==null) return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        else return new ResponseEntity<>(book,HttpStatus.OK);
     }
 
+    //Soft delete sách theo Id
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteBookById(@PathVariable String id){
+        if(!bookSvc.isBookExist(id)) return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        bookSvc.softDeleteBookById(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

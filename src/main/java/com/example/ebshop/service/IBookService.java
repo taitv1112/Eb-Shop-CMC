@@ -15,4 +15,5 @@ public interface IBookService {
     void updateExistingBook(SaveBook book);
     void saveNewBook(SaveBook newBook);
     BookGotByIdToUpdate getBookByIdToUpdate(String id);
+    void softDeleteBookById(String id);
 }

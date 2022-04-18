@@ -42,6 +42,7 @@ public class BookServiceImpl implements IBookService {
     //Kiểm tra xem sách đã tồn tại chưa
     @Override
     public boolean isBookExist(String id) {
+
         return bookRepo.existsById(id);
     }
 
@@ -49,6 +50,7 @@ public class BookServiceImpl implements IBookService {
     @Override
     public void updateExistingBook(SaveBook book) {
         Book oldBook = findBookById(book.getId());
+        if(oldBook.getDeleted()) return;
         transferDataFromSaveBookToBook(book, oldBook);
         saveBook(oldBook);
     }
@@ -56,8 +58,11 @@ public class BookServiceImpl implements IBookService {
     // lưu sách mới
     public void saveNewBook(SaveBook newBook) {
         Book book = new Book();
-        book.setId(newBook.getId());
+        if(newBook.getId().equals("0")||newBook.getId()==null) book.setId("0");
+        else book.setId(newBook.getId());
         transferDataFromSaveBookToBook(newBook,book);
+        book.setDeleted(false);
+        book.setQuantitySold(0L);
         saveBook(book);
     }
 
@@ -90,8 +95,15 @@ public class BookServiceImpl implements IBookService {
     @Override
     public BookGotByIdToUpdate getBookByIdToUpdate(String id) {
         Book book = findBookById(id);
+        if(book.getDeleted()) return null;
         BookGotByIdToUpdate bookDTO = new BookGotByIdToUpdate();
         bookDTO.getData(book);
         return bookDTO;
+    }
+
+    // Đổi delete từ false sang true
+    @Override
+    public void softDeleteBookById(String id) {
+        bookRepo.softDeleteBookById(id);
     }
 }

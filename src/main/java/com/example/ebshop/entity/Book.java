@@ -18,7 +18,7 @@ public class Book {
     private Publisher publisher;
     private BigDecimal price;
     private Date publishedYear;
-    private String status;
+    private Boolean deleted;
     private Long quantityCurrent;
     private Long quantitySold;
 }
