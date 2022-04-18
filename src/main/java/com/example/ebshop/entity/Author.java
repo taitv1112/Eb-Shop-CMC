@@ -1,6 +1,5 @@
 package com.example.ebshop.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import javax.persistence.*;
 
@@ -8,7 +7,15 @@ import javax.persistence.*;
 @Data
 public class Author {
     @Id
-    @Column(length = 254)
+    @Column(name = "id",length = 254)
     private String id ;
     private String name;
+
+    public Author() {
+    }
+
+    public Author(String id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 }

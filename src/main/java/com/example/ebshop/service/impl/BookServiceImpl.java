@@ -1,6 +1,8 @@
 package com.example.ebshop.service.impl;
 
+import com.example.ebshop.dto.request.AuthorDTO;
 import com.example.ebshop.dto.request.SavedBookDTO;
+import com.example.ebshop.dto.response.ThreeMostSellBookDTO;
 import com.example.ebshop.dto.response.UpdatedBookDTO;
 import com.example.ebshop.entity.Book;
 import com.example.ebshop.repository.BookRepository;
@@ -10,26 +12,28 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class BookServiceImpl implements BookService {
     @Autowired
-    BookRepository bookRepo;
+    BookRepository bookRepository;
 
     // lưu lại sách
     @Override
     public void saveBook(Book book) {
-        bookRepo.save(book);
+        bookRepository.save(book);
     }
 
     //Tìm sách theo id
     @Override
     public Book findBookById(String id) {
-        return bookRepo.findById(id).get();
+        return bookRepository.findById(id).get();
     }
 
     //Kiểm tra xem sách đã tồn tại chưa
     private boolean isBookExist(String id) {
-        return bookRepo.existsById(id);
+        return bookRepository.existsById(id);
     }
 
     //Cập nhật lại sách đã tồn tại
@@ -80,18 +84,18 @@ public class BookServiceImpl implements BookService {
     private UpdatedBookDTO getBookByIdToUpdate(String id) {
         Book book = findBookById(id);
         if(book.getDeleted()) return null;
-        UpdatedBookDTO bookDTO = new UpdatedBookDTO();
-        bookDTO.getData(book);
+        UpdatedBookDTO bookDTO = bookRepository.findAllById(UpdatedBookDTO.class,id);
         return bookDTO;
     }
 
     // Đổi delete từ false sang true
     private void softDeleteBookById(String id) {
-        bookRepo.softDeleteBookById(id);
+        bookRepository.softDeleteBookById(id);
     }
 
+    // Check xem đã xóa chưa
     private boolean isDeleted(String id) {
-        Book book = bookRepo.isDeleted(id);
+        Book book = bookRepository.isDeleted(id);
         return book != null;
     }
 
@@ -124,5 +128,17 @@ public class BookServiceImpl implements BookService {
         UpdatedBookDTO book = getBookByIdToUpdate(id);
         if(book==null) return ResponseEntity.status(HttpStatus.OK).body("Not found!");
         else return new ResponseEntity<>(book,HttpStatus.OK);
+    }
+
+    // Lấy ra 3 cuốn sách bán chạy nhất
+    @Override
+    public List<ThreeMostSellBookDTO> find3MostSoldBook(String id) {
+        return bookRepository.find3MostSoldBook(ThreeMostSellBookDTO.class,id);
+    }
+
+    //Lấy ra số lượng sách
+    @Override
+    public Long getNumberOfBooks(AuthorDTO authorDTO) {
+        return bookRepository.countByAuthor(authorDTO.getId());
     }
 }

@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Repository
 public interface BookRepository extends JpaRepository<Book,String> {
     @Modifying
@@ -16,4 +18,12 @@ public interface BookRepository extends JpaRepository<Book,String> {
 
     @Query("select b from Book b where b.id=?1 and b.deleted=true")
     Book isDeleted(String id);
+
+    @Query(nativeQuery = true,value = "select name,id from book where author_id = ?1 limit 3")
+    <T>List<T> find3MostSoldBook(Class<T> classType,String id);
+
+    <T>T findAllById(Class<T> updatedBookDTOClass,String id);
+
+    @Query(value = "select count(id) from Book where author.id=?1")
+    Long countByAuthor(String id);
 }

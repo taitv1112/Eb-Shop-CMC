@@ -20,7 +20,7 @@ public class BookController {
     }
 
     //Tìm sách theo Id sách
-    @GetMapping("//{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<?> getBookById(@PathVariable String id){
        return bookService.getBookById(id);
     }
