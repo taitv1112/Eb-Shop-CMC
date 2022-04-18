@@ -6,6 +6,7 @@ import lombok.Data;
 import java.math.BigDecimal;
 import java.util.Date;
 
+//DTO sách từ request vào để update hoặc thêm sách
 @Data
 public class SaveBook {
     private String id;
