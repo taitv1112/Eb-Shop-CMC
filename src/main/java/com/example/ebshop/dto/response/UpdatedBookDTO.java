@@ -9,7 +9,7 @@ import java.util.Date;
 
 //DTO để lấy sách ra từ Id cho update
 @Data
-public class BookGotByIdToUpdate {
+public class UpdatedBookDTO {
     private String id;
     private String name;
     private Author author;

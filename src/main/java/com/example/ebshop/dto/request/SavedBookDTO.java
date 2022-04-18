@@ -8,7 +8,7 @@ import java.util.Date;
 
 //DTO sách từ request vào để update hoặc thêm sách
 @Data
-public class SaveBook {
+public class SavedBookDTO {
     private String id;
     private String name;
     private Author author;

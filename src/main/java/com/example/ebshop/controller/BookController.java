@@ -1,11 +1,8 @@
 package com.example.ebshop.controller;
 
-import com.example.ebshop.dto.request.SaveBook;
-import com.example.ebshop.dto.response.BookGotByIdToUpdate;
-import com.example.ebshop.entity.Book;
-import com.example.ebshop.service.IBookService;
+import com.example.ebshop.dto.request.SavedBookDTO;
+import com.example.ebshop.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,32 +11,23 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/book")
 public class BookController {
     @Autowired
-    IBookService bookSvc;
+    BookService bookService;
 
     //Update va thêm sách vào kho
     @PostMapping("/save")
-    public ResponseEntity<?> saveBook(@RequestBody SaveBook book){
-        if(bookSvc.isBookExist(book.getId())){
-           bookSvc.updateExistingBook(book);
-        } else {
-            bookSvc.saveNewBook(book);
-        }
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<String> saveBook(@RequestBody SavedBookDTO book){
+        return bookService.saveBookToStorage(book);
     }
 
     //Tìm sách theo Id sách
     @GetMapping("//{id}")
-    public ResponseEntity<BookGotByIdToUpdate> getBookById(@PathVariable String id){
-        BookGotByIdToUpdate book = bookSvc.getBookByIdToUpdate(id);
-        if(book==null) return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        else return new ResponseEntity<>(book,HttpStatus.OK);
+    public ResponseEntity<?> getBookById(@PathVariable String id){
+       return bookService.getBookById(id);
     }
 
     //Soft delete sách theo Id
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteBookById(@PathVariable String id){
-        if(!bookSvc.isBookExist(id)) return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        bookSvc.softDeleteBookById(id);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<String> deleteBookById(@PathVariable String id){
+        return bookService.deleteBookById(id);
     }
 }

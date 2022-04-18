@@ -1,36 +1,24 @@
 package com.example.ebshop.service.impl;
 
-import com.example.ebshop.dto.request.SaveBook;
-import com.example.ebshop.dto.response.BookGotByIdToUpdate;
+import com.example.ebshop.dto.request.SavedBookDTO;
+import com.example.ebshop.dto.response.UpdatedBookDTO;
 import com.example.ebshop.entity.Book;
 import com.example.ebshop.repository.BookRepository;
-import com.example.ebshop.service.IBookService;
+import com.example.ebshop.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
-public class BookServiceImpl implements IBookService {
+public class BookServiceImpl implements BookService {
     @Autowired
     BookRepository bookRepo;
-
-    // Tìm tất cả sách
-    @Override
-    public Page<Book> findAllBook(Pageable page) {
-        return bookRepo.findAll(page);
-    }
 
     // lưu lại sách
     @Override
     public void saveBook(Book book) {
         bookRepo.save(book);
-    }
-
-    //xóa sách theo id
-    @Override
-    public void deleteById(String id) {
-        bookRepo.deleteById(id);
     }
 
     //Tìm sách theo id
@@ -40,15 +28,12 @@ public class BookServiceImpl implements IBookService {
     }
 
     //Kiểm tra xem sách đã tồn tại chưa
-    @Override
-    public boolean isBookExist(String id) {
-
+    private boolean isBookExist(String id) {
         return bookRepo.existsById(id);
     }
 
     //Cập nhật lại sách đã tồn tại
-    @Override
-    public void updateExistingBook(SaveBook book) {
+    private void updateExistingBook(SavedBookDTO book) {
         Book oldBook = findBookById(book.getId());
         if(oldBook.getDeleted()) return;
         transferDataFromSaveBookToBook(book, oldBook);
@@ -56,7 +41,7 @@ public class BookServiceImpl implements IBookService {
     }
 
     // lưu sách mới
-    public void saveNewBook(SaveBook newBook) {
+    private void saveNewBook(SavedBookDTO newBook) {
         Book book = new Book();
         if(newBook.getId().equals("0")||newBook.getId()==null) book.setId("0");
         else book.setId(newBook.getId());
@@ -67,7 +52,7 @@ public class BookServiceImpl implements IBookService {
     }
 
     // Chuyển dữ liệu từ DTO
-    private void transferDataFromSaveBookToBook(SaveBook book,Book oldBook) {
+    private void transferDataFromSaveBookToBook(SavedBookDTO book, Book oldBook) {
          if(book.getName()!=null){
             oldBook.setName(book.getName());
         }
@@ -92,18 +77,52 @@ public class BookServiceImpl implements IBookService {
     }
 
     //Lấy ra Dto của sách từ ID
-    @Override
-    public BookGotByIdToUpdate getBookByIdToUpdate(String id) {
+    private UpdatedBookDTO getBookByIdToUpdate(String id) {
         Book book = findBookById(id);
         if(book.getDeleted()) return null;
-        BookGotByIdToUpdate bookDTO = new BookGotByIdToUpdate();
+        UpdatedBookDTO bookDTO = new UpdatedBookDTO();
         bookDTO.getData(book);
         return bookDTO;
     }
 
     // Đổi delete từ false sang true
-    @Override
-    public void softDeleteBookById(String id) {
+    private void softDeleteBookById(String id) {
         bookRepo.softDeleteBookById(id);
+    }
+
+    private boolean isDeleted(String id) {
+        Book book = bookRepo.isDeleted(id);
+        return book != null;
+    }
+
+    // Lưu sách hoặc update sách
+    @Override
+    public ResponseEntity<String> saveBookToStorage(SavedBookDTO book) {
+        if(isDeleted(book.getId())) return ResponseEntity.status(HttpStatus.OK).body("Deleted!");
+        if(isBookExist(book.getId())){
+            updateExistingBook(book);
+            return ResponseEntity.status(HttpStatus.OK).body("Updated success!");
+        } else {
+            saveNewBook(book);
+            return ResponseEntity.status(HttpStatus.OK).body("Added success!");
+        }
+    }
+
+    //Soft delete sách
+    @Override
+    public ResponseEntity<String> deleteBookById(String id) {
+        //Kiểm tra xem sách có tồn tại hay đã bị soft delete không?
+        if(!isBookExist(id)) return ResponseEntity.status(HttpStatus.OK).body("Not found!");
+        if(isDeleted(id)) return ResponseEntity.status(HttpStatus.OK).body("Deleted!");
+        softDeleteBookById(id);
+        return ResponseEntity.status(HttpStatus.OK).body("Delete success!");
+    }
+
+    // Tìm sách theo Id
+    @Override
+    public ResponseEntity<?> getBookById(String id) {
+        UpdatedBookDTO book = getBookByIdToUpdate(id);
+        if(book==null) return ResponseEntity.status(HttpStatus.OK).body("Not found!");
+        else return new ResponseEntity<>(book,HttpStatus.OK);
     }
 }
