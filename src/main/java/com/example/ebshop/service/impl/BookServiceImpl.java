@@ -1,7 +1,9 @@
 package com.example.ebshop.service.impl;
 
 import com.example.ebshop.dto.request.AuthorDTO;
+import com.example.ebshop.dto.request.BookQuantityDTO;
 import com.example.ebshop.dto.request.SavedBookDTO;
+import com.example.ebshop.dto.response.PublisherDTO;
 import com.example.ebshop.dto.response.ThreeMostSellBookDTO;
 import com.example.ebshop.dto.response.UpdatedBookDTO;
 import com.example.ebshop.entity.Book;
@@ -11,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import java.util.List;
 
@@ -140,5 +143,20 @@ public class BookServiceImpl implements BookService {
     @Override
     public Long getNumberOfBooks(AuthorDTO authorDTO) {
         return bookRepository.countByAuthor(authorDTO.getId());
+    }
+
+    @Override
+    public boolean checkQuantity(String id) {
+        List<BookQuantityDTO> quantity = bookRepository.findQuantityById(BookQuantityDTO.class,id);
+        if(ObjectUtils.isEmpty(quantity)) return false;
+        for (BookQuantityDTO book:quantity) {
+            if(book.getQuantityCurrent()>0) return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void removePublisher(String id) {
+        bookRepository.removePublisher(id);
     }
 }

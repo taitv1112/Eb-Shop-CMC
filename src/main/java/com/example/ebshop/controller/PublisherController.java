@@ -27,4 +27,9 @@ public class PublisherController {
     public ResponseEntity<String> updatePublisher(@RequestBody Publisher publisher){
         return publisherService.update(publisher);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deletePublisher(@PathVariable String id){
+        return publisherService.deletePublisher(id);
+    }
 }

@@ -16,4 +16,6 @@ public interface BookService {
     ResponseEntity<?> getBookById(String id);
     List<ThreeMostSellBookDTO> find3MostSoldBook(String id);
     Long getNumberOfBooks(AuthorDTO authorDTO);
+    boolean checkQuantity(String id);
+    void removePublisher(String id);
 }

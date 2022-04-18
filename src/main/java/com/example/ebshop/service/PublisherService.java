@@ -7,4 +7,5 @@ public interface PublisherService {
     ResponseEntity<String> save(Publisher publisher);
     ResponseEntity<?> findById(String id);
     ResponseEntity<String> update(Publisher publisher);
+    ResponseEntity<String> deletePublisher(String id);
 }
