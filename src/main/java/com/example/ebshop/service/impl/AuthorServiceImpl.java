@@ -22,6 +22,7 @@ public class AuthorServiceImpl implements AuthorService {
     @Autowired
     BookService bookService;
 
+    //Lưu hoặc cập nhật tác giả
     @Override
     public ResponseEntity<String> saveAuthor(AuthorDTO authorDTO) {
         if (ObjectUtils.isEmpty(authorDTO)) {
@@ -32,6 +33,7 @@ public class AuthorServiceImpl implements AuthorService {
         return ResponseEntity.status(HttpStatus.OK).body("Add success!");
     }
 
+    //Tìm tác giả từ ID
     @Override
     public ResponseEntity<?> getAuthorById(String id) {
         if(ObjectUtils.isEmpty(authorRepository.findById(id))) return ResponseEntity.status(HttpStatus.OK).body("Author is not exist!");
@@ -44,11 +46,13 @@ public class AuthorServiceImpl implements AuthorService {
         return new ResponseEntity<>(authorAdnBookDTO,HttpStatus.OK);
     }
 
+    //Cập nhật tác giả
     @Override
     public ResponseEntity<String> updateAuthor(AuthorDTO authorDTO) {
         return saveAuthor(authorDTO);
     }
 
+    //Xóa tác giả
     @Override
     public ResponseEntity<String> deleteAuthor(String id) {
         if(authorRepository.existsById(id)){
