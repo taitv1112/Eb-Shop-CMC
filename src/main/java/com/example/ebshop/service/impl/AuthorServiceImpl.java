@@ -31,6 +31,21 @@ public class AuthorServiceImpl implements AuthorService {
         return new ResponseEntity<>(authorRepository.findById(id).get(),HttpStatus.OK);
     }
 
+    @Override
+    public ResponseEntity<String> updateAuthor(AuthorDTO authorDTO) {
+        return saveAuthor(authorDTO);
+    }
+
+    @Override
+    public ResponseEntity<String> deleteAuthor(String id) {
+        if(authorRepository.existsById(id)){
+            authorRepository.deleteById(id);
+            return ResponseEntity.status(HttpStatus.OK).body("Delete Success!");
+        } else {
+            return ResponseEntity.status(HttpStatus.OK).body("Not found author!");
+        }
+    }
+
     private Author transferData(AuthorDTO authorDTO) {
         Author author = new Author();
         author.setId(authorDTO.getId());
