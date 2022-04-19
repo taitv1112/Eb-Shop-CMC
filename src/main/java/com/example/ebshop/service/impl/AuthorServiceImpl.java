@@ -2,8 +2,10 @@ package com.example.ebshop.service.impl;
 
 import com.example.ebshop.dto.request.AuthorDTO;
 import com.example.ebshop.dto.response.AuthorAdnBookDTO;
+import com.example.ebshop.dto.SortForAuthor;
 import com.example.ebshop.dto.response.TopSellingBooks;
 import com.example.ebshop.entity.Author;
+import com.example.ebshop.entity.OrderDetail;
 import com.example.ebshop.repository.AuthorRepository;
 import com.example.ebshop.service.AuthorService;
 import com.example.ebshop.service.BookService;
@@ -13,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -29,7 +32,7 @@ public class AuthorServiceImpl implements AuthorService {
         if (ObjectUtils.isEmpty(authorDTO)) {
             return ResponseEntity.status(HttpStatus.OK).body("Author is null!");
         }
-        Author author = new Author(authorDTO.getId(), authorDTO.getName());
+        Author author = new Author(authorDTO.getId(), authorDTO.getName(),authorDTO.getWebsite(),authorDTO.getOrganization(),0L);
         authorRepository.save(author);
         return ResponseEntity.status(HttpStatus.OK).body("Add success!");
     }
@@ -62,6 +65,22 @@ public class AuthorServiceImpl implements AuthorService {
             return ResponseEntity.status(HttpStatus.OK).body("Delete Success!");
         } else {
             return ResponseEntity.status(HttpStatus.OK).body("Not found author!");
+        }
+    }
+
+    // Lấy 5 tác giả sách bán chạy nhất
+    @Override
+    public ResponseEntity<?> getFiveBestSeller() {
+        List<AuthorDTO> list = authorRepository.findAllBy(AuthorDTO.class);
+        list.sort(new SortForAuthor());
+        if(list.size()>5) return ResponseEntity.status(HttpStatus.OK).body(list.subList(0,4));
+        return ResponseEntity.status(HttpStatus.OK).body(list);
+    }
+
+    @Override
+    public void soldBook(List<OrderDetail> orderDetails) {
+        for (OrderDetail orderDetail : orderDetails) {
+            authorRepository.soldBook(orderDetail.getQuantity(),orderDetail.getBook().getAuthor().getId());
         }
     }
 }

@@ -1,22 +1,20 @@
 package com.example.ebshop.dto.response;
 
-import com.example.ebshop.dto.request.AuthorDTO;
 
-import java.math.BigDecimal;
+public interface BookDetailsDTO {
+    String getId();
+    String getName();
+    AuthorDTO getAuthor();
+    PublisherDTO getPublisher();
+    Long getQuantitySold();
 
-public class BookDetailsDTO {
-    private String id;
-    private AuthorDTO author;
-    private PublisherDTO publisher;
-    private BigDecimal price;
+  interface AuthorDTO{
+      String getId();
+      String getName();
+  }
 
-    public BookDetailsDTO() {
-    }
-
-    public BookDetailsDTO(String id, AuthorDTO author, PublisherDTO publisher, BigDecimal price) {
-        this.id = id;
-        this.author = author;
-        this.publisher = publisher;
-        this.price = price;
-    }
+  interface PublisherDTO{
+      String getId();
+      String getName();
+  }
 }

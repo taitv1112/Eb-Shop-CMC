@@ -1,6 +1,7 @@
 package com.example.ebshop.controller;
 
 import com.example.ebshop.dto.request.SaveOrderDTO;
+import com.example.ebshop.service.CustomerService;
 import com.example.ebshop.service.OrderDetailService;
 import com.example.ebshop.service.OrdersService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,9 @@ public class OrderController {
     @Autowired
     OrderDetailService OrderDetailService;
 
+    @Autowired
+    CustomerService customerService;
+
     @PostMapping("/save")
     private ResponseEntity<String> saveOrder(@RequestBody SaveOrderDTO saveOrderDTO){
         return ordersService.saveOrder(saveOrderDTO);
@@ -25,5 +29,10 @@ public class OrderController {
     @GetMapping("/{id}")
     private ResponseEntity<?> getOrder(@PathVariable String id){
         return ordersService.getOrder(id);
+    }
+
+    @GetMapping("/best-seller")
+    private ResponseEntity<?> fiveBestCustomer(){
+        return customerService.fiveBestCustomer();
     }
 }

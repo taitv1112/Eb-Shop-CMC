@@ -7,6 +7,9 @@ import com.example.ebshop.dto.response.PublisherDTO;
 import com.example.ebshop.dto.response.TopSellingBooks;
 import com.example.ebshop.entity.Book;
 import com.example.ebshop.entity.OrderDetail;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -25,4 +28,7 @@ public interface BookService {
     boolean isEnoughBook(OrderBookDTO book);
     void soldBook(List<OrderDetail> orderDetails);
     boolean isDeleted(String id);
+    ResponseEntity<?> tenBestSellingBook();
+    Long getTotalNumberOfSoldBookById(String id);
+    Long getSoldBookByPublisherId(String id);
 }

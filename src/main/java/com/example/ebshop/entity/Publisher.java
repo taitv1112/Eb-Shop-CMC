@@ -12,4 +12,18 @@ public class Publisher {
     private String id ;
     @NotEmpty
     private String name;
+    private String website;
+    private String address;
+    private Long totalQuantitySold;
+
+    public Publisher() {
+    }
+
+    public Publisher(String id, String name, String website, String address, Long totalQuantitySold) {
+        this.id = id;
+        this.name = name;
+        this.website = website;
+        this.address = address;
+        this.totalQuantitySold = totalQuantitySold;
+    }
 }

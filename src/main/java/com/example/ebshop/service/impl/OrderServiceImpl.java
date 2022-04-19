@@ -7,10 +7,7 @@ import com.example.ebshop.entity.Customer;
 import com.example.ebshop.entity.OrderDetail;
 import com.example.ebshop.entity.Orders;
 import com.example.ebshop.repository.OrdersRepository;
-import com.example.ebshop.service.BookService;
-import com.example.ebshop.service.CustomerService;
-import com.example.ebshop.service.OrderDetailService;
-import com.example.ebshop.service.OrdersService;
+import com.example.ebshop.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +32,13 @@ public class OrderServiceImpl implements OrdersService {
     @Autowired
     BookService bookService;
 
+    @Autowired
+    AuthorService authorService;
+
+    @Autowired
+    PublisherService publisherService;
+
+    //Them order
     @Override
     public ResponseEntity<String> saveOrder(SaveOrderDTO saveOrderDTO) {
         for (OrderDetailDTO orderDetails: saveOrderDTO.getOrderDetails()) {
@@ -74,9 +78,13 @@ public class OrderServiceImpl implements OrdersService {
         Orders order = new Orders(generatedString,customer,orderDetails,totalPrice);
         ordersRepository.save(order);
         bookService.soldBook(orderDetails);
+        authorService.soldBook(orderDetails);
+        publisherService.soldBook(orderDetails);
+        customerService.buyBook(orderDetails,customer.getEmail());
         return ResponseEntity.status(HttpStatus.OK).body("Add success!");
     }
 
+    //Lay ra order
     @Override
     public ResponseEntity<?> getOrder(String id) {
         if(!ordersRepository.existsById(id)) return ResponseEntity.status(HttpStatus.OK).body("Wrong id!");

@@ -3,6 +3,7 @@ package com.example.ebshop.service.impl;
 import com.example.ebshop.dto.request.AuthorDTO;
 import com.example.ebshop.dto.request.OrderBookDTO;
 import com.example.ebshop.dto.request.SavedBookDTO;
+import com.example.ebshop.dto.response.BookDetailsDTO;
 import com.example.ebshop.dto.response.PublisherDTO;
 import com.example.ebshop.dto.response.TopSellingBooks;
 import com.example.ebshop.dto.response.UpdatedBookDTO;
@@ -11,16 +12,24 @@ import com.example.ebshop.entity.OrderDetail;
 import com.example.ebshop.repository.BookRepository;
 import com.example.ebshop.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @Service
 public class BookServiceImpl implements BookService {
     @Autowired
     BookRepository bookRepository;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     // lưu lại sách
     @Override
@@ -101,6 +110,35 @@ public class BookServiceImpl implements BookService {
         return bookRepository.isDeleted(id);
     }
 
+    // Lấy ra 10 quyển sách bán chạy nhất
+    @Override
+    public ResponseEntity<?> tenBestSellingBook() {
+        Page<BookDetailsDTO> page = bookRepository.tenBestSellingBook(BookDetailsDTO.class, PageRequest.of(0,10));
+        List<BookDetailsDTO> bookDetailsDTO=page.getContent();
+        return ResponseEntity.status(HttpStatus.OK).body(bookDetailsDTO);
+    }
+
+    // Lấy ra tổng số sách đã bán
+    @Override
+    public Long getTotalNumberOfSoldBookById(String id) {
+        Long total = 0L;
+        List<Long> soldBookList = bookRepository.findListQuantitySoldBook(id);
+        for (Long number:soldBookList) {
+            total += number;
+        }
+        return total;
+    }
+
+    @Override
+    public Long getSoldBookByPublisherId(String id) {
+        Long total = 0L;
+        List<Long> soldBookList = bookRepository.findQuantitySoldBookByPublisherId(id);
+        for (Long number:soldBookList) {
+            total += number;
+        }
+        return total;
+    }
+
     // Lưu sách hoặc update sách
     @Override
     public ResponseEntity<String> saveBookToStorage(SavedBookDTO book) {
@@ -162,15 +200,17 @@ public class BookServiceImpl implements BookService {
         return bookRepository.countByPublisherId(id);
     }
 
+    //Kiểm tra đủ sách ko
     @Override
     public boolean isEnoughBook(OrderBookDTO book) {
         return bookRepository.isEnoughBook(book.getId());
     }
 
+    //Thêm sách đã bán và giảm sách hiện tại
     @Override
     public void soldBook(List<OrderDetail> orderDetails) {
         for (OrderDetail orderDetail:orderDetails) {
-           bookRepository.soldBook(orderDetail.getQuantity(),orderDetail.getBook().getId());
+           bookRepository.addSoldBook(orderDetail.getQuantity(),orderDetail.getBook().getId());
         }
     }
 }

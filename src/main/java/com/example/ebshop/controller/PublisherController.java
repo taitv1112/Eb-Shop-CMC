@@ -32,4 +32,9 @@ public class PublisherController {
     public ResponseEntity<String> deletePublisher(@PathVariable String id){
         return publisherService.deletePublisher(id);
     }
+
+    @GetMapping("/best-seller")
+    public ResponseEntity<?> getBestseller(){
+        return publisherService.getBestseller();
+    }
 }

@@ -30,4 +30,10 @@ public class BookController {
     public ResponseEntity<String> deleteBookById(@PathVariable String id){
         return bookService.deleteBookById(id);
     }
+
+    //10 đầu sách bán chạy nhất
+    @GetMapping("/best-seller")
+    public ResponseEntity<?> tenBestSellingBook(){
+        return bookService.tenBestSellingBook();
+    }
 }

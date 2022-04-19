@@ -36,4 +36,10 @@ public class AuthorController {
     public ResponseEntity<?> getAuthorById(@PathVariable String id){
         return authorService.getAuthorById(id);
     }
+
+    //Xem 5 tác giả nhiều lượt view nhất
+    @GetMapping("/best-seller")
+    public ResponseEntity<?> getFiveBestSeller(){
+        return authorService.getFiveBestSeller();
+    }
 }
