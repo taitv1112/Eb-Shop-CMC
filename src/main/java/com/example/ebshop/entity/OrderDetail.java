@@ -16,4 +16,11 @@ public class OrderDetail {
     private  Book book;
     private Long quantity;
     private BigDecimal price;
+
+    public OrderDetail(Orders order, Book book, Long quantity, BigDecimal price) {
+        this.order = order;
+        this.book = book;
+        this.quantity = quantity;
+        this.price = price;
+    }
 }

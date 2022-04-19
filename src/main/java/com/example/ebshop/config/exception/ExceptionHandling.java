@@ -20,4 +20,9 @@ public class ExceptionHandling extends  Exception{
     public ExceptionHandling(String status) {
         this.status = HttpStatus.valueOf(status);
     }
+    public ExceptionHandling(String status,String message) {
+        this.status = HttpStatus.valueOf(status);
+        this.message = message;
+    }
+
 }

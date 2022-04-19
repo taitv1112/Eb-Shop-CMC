@@ -37,6 +37,13 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 		return new ResponseEntity<>(error, error.getStatus());
 	}
 
+	@ExceptionHandler(ExceptionHandling.class)
+	public ResponseEntity<Object> handleEntityNotFound(ExceptionHandling exception) {
+		ApiErrorResponse error = new ApiErrorResponse(exception.getStatus(), exception.getMessage());
+		return new ResponseEntity<>(error, error.getStatus());
+	}
+
+
 //	// not found url handler
 //	@Override
 //	protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException exception,
