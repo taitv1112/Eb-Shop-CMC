@@ -2,7 +2,6 @@ package com.example.ebshop.entity;
 
 import lombok.Data;
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
 import java.math.BigDecimal;
 import java.util.List;
 

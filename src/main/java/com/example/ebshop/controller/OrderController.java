@@ -1,6 +1,6 @@
 package com.example.ebshop.controller;
 
-import com.example.ebshop.dto.request.OrderDTO;
+import com.example.ebshop.dto.request.SaveOrderDTO;
 import com.example.ebshop.service.OrderDetailService;
 import com.example.ebshop.service.OrdersService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,12 @@ public class OrderController {
     OrderDetailService OrderDetailService;
 
     @PostMapping("/save")
-    private ResponseEntity<String> saveOrder(@RequestBody OrderDTO orderDTO){
-        return ordersService.saveOrder(orderDTO);
+    private ResponseEntity<String> saveOrder(@RequestBody SaveOrderDTO saveOrderDTO){
+        return ordersService.saveOrder(saveOrderDTO);
+    }
+
+    @GetMapping("/{id}")
+    private ResponseEntity<?> getOrder(@PathVariable String id){
+        return ordersService.getOrder(id);
     }
 }

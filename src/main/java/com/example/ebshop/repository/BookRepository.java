@@ -30,11 +30,6 @@ public interface BookRepository extends JpaRepository<Book,String> {
     @Query("select case when count(id)>0 then true else false end from Book where publisher.id =?1 and deleted=false")
     Boolean checkPublisher(String id);
 
-    @Modifying
-    @Transactional
-    @Query("update Book b set b.publisher = null where b.publisher.id=?1")
-    void removePublisher(String id);
-
     @Query(nativeQuery = true,value = "select name,id from book where publisher_id = ?1 limit 5")
     <T>List<T> find5BestSellingBook(Class<T> classType, String id);
 

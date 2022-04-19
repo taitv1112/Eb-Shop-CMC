@@ -1,6 +1,5 @@
 package com.example.ebshop.service;
 
-import com.example.ebshop.dto.request.OrderDTO;
 import com.example.ebshop.dto.request.OrderDetailDTO;
 import com.example.ebshop.entity.OrderDetail;
 

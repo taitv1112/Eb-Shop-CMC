@@ -1,7 +1,7 @@
 package com.example.ebshop.service;
 
 import com.example.ebshop.dto.request.AuthorDTO;
-import com.example.ebshop.dto.request.BookDTO;
+import com.example.ebshop.dto.request.OrderBookDTO;
 import com.example.ebshop.dto.request.SavedBookDTO;
 import com.example.ebshop.dto.response.PublisherDTO;
 import com.example.ebshop.dto.response.TopSellingBooks;
@@ -22,7 +22,7 @@ public interface BookService {
     boolean checkPublisher(String id);
     List<TopSellingBooks> find5BestSellingBook(PublisherDTO publisher);
     Long getCountOfBookByPublisherId(String id);
-    boolean isEnoughBook(BookDTO book);
+    boolean isEnoughBook(OrderBookDTO book);
     void soldBook(List<OrderDetail> orderDetails);
     boolean isDeleted(String id);
 }

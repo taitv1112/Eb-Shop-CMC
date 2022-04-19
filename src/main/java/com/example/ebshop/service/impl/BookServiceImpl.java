@@ -1,8 +1,7 @@
 package com.example.ebshop.service.impl;
 
 import com.example.ebshop.dto.request.AuthorDTO;
-import com.example.ebshop.dto.request.BookDTO;
-import com.example.ebshop.dto.request.BookQuantityDTO;
+import com.example.ebshop.dto.request.OrderBookDTO;
 import com.example.ebshop.dto.request.SavedBookDTO;
 import com.example.ebshop.dto.response.PublisherDTO;
 import com.example.ebshop.dto.response.TopSellingBooks;
@@ -164,7 +163,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public boolean isEnoughBook(BookDTO book) {
+    public boolean isEnoughBook(OrderBookDTO book) {
         return bookRepository.isEnoughBook(book.getId());
     }
 

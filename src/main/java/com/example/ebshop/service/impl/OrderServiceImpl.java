@@ -1,7 +1,8 @@
 package com.example.ebshop.service.impl;
 
-import com.example.ebshop.dto.request.OrderDTO;
+import com.example.ebshop.dto.request.SaveOrderDTO;
 import com.example.ebshop.dto.request.OrderDetailDTO;
+import com.example.ebshop.dto.response.ShowOrderDTO;
 import com.example.ebshop.entity.Customer;
 import com.example.ebshop.entity.OrderDetail;
 import com.example.ebshop.entity.Orders;
@@ -35,13 +36,13 @@ public class OrderServiceImpl implements OrdersService {
     BookService bookService;
 
     @Override
-    public ResponseEntity<String> saveOrder(OrderDTO orderDTO) {
-        for (OrderDetailDTO orderDetails:orderDTO.getOrderDetails()) {
+    public ResponseEntity<String> saveOrder(SaveOrderDTO saveOrderDTO) {
+        for (OrderDetailDTO orderDetails: saveOrderDTO.getOrderDetails()) {
             if(ObjectUtils.isEmpty(orderDetails)) return ResponseEntity.status(HttpStatus.OK).body("Missing order!");
             if(ObjectUtils.isEmpty(orderDetails.getBook())) return ResponseEntity.status(HttpStatus.OK).body("Missing book!");
         }
-        if(ObjectUtils.isEmpty(orderDTO.getCustomer())) return ResponseEntity.status(HttpStatus.OK).body("Missing customer!");
-        for (OrderDetailDTO orderDetailDTO:orderDTO.getOrderDetails()) {
+        if(ObjectUtils.isEmpty(saveOrderDTO.getCustomer())) return ResponseEntity.status(HttpStatus.OK).body("Missing customer!");
+        for (OrderDetailDTO orderDetailDTO: saveOrderDTO.getOrderDetails()) {
             if(!bookService.isEnoughBook(orderDetailDTO.getBook())){
                 return ResponseEntity.status(HttpStatus.OK).body(orderDetailDTO.getBook().getId()+" not enough book!");
             }
@@ -49,9 +50,9 @@ public class OrderServiceImpl implements OrdersService {
                 return ResponseEntity.status(HttpStatus.OK).body(orderDetailDTO.getBook().getId()+" got deleted!");
             }
         }
-        Customer customer = customerService.findByID(orderDTO.getCustomer().getEmail());
-        if(ObjectUtils.isEmpty(customer)) customer = customerService.save(orderDTO.getCustomer());
-        List<OrderDetail> orderDetails = orderDetailService.save(orderDTO.getOrderDetails());
+        Customer customer = customerService.findByID(saveOrderDTO.getCustomer().getEmail());
+        if(ObjectUtils.isEmpty(customer)) customer = customerService.save(saveOrderDTO.getCustomer());
+        List<OrderDetail> orderDetails = orderDetailService.save(saveOrderDTO.getOrderDetails());
         String generatedString;
         BigDecimal totalPrice = new BigDecimal("0");
         do {
@@ -74,5 +75,12 @@ public class OrderServiceImpl implements OrdersService {
         ordersRepository.save(order);
         bookService.soldBook(orderDetails);
         return ResponseEntity.status(HttpStatus.OK).body("Add success!");
+    }
+
+    @Override
+    public ResponseEntity<?> getOrder(String id) {
+        if(!ordersRepository.existsById(id)) return ResponseEntity.status(HttpStatus.OK).body("Wrong id!");
+        ShowOrderDTO showOrderDTO = ordersRepository.findAllById(ShowOrderDTO.class,id);
+        return ResponseEntity.status(HttpStatus.OK).body(showOrderDTO);
     }
 }

@@ -3,13 +3,13 @@ package com.example.ebshop.dto.request;
 import lombok.Data;
 
 @Data
-public class BookDTO {
+public class OrderBookDTO {
     private String id;
 
-    public BookDTO() {
+    public OrderBookDTO() {
     }
 
-    public BookDTO(String id) {
+    public OrderBookDTO(String id) {
         this.id = id;
     }
 }

@@ -1,7 +1,6 @@
 package com.example.ebshop.service.impl;
 
 import com.example.ebshop.dto.request.CustomerDTO;
-import com.example.ebshop.dto.request.OrderDTO;
 import com.example.ebshop.entity.Customer;
 import com.example.ebshop.repository.CustomerRepository;
 import com.example.ebshop.service.CustomerService;
