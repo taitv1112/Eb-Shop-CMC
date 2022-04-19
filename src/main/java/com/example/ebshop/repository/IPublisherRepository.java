@@ -1,2 +1,5 @@
-package com.example.ebshop.repository;public interface IPublisherRepository {
+package com.example.ebshop.repository;
+
+public interface IPublisherRepository {
+
 }
