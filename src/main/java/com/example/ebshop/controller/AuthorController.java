@@ -19,18 +19,20 @@ public class AuthorController {
     @Autowired
     IAuthorService authorService;
 
-    @PostMapping("/create-author")
+    @PostMapping("/create")
     //@PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> createAuthor(@RequestBody AuthorCreateForm authorCreateForm){
         authorService.createAuthor(authorCreateForm);
         return new ResponseEntity<String>("Created success !", HttpStatus.OK);
     }
 
-    @PutMapping(value = "/update-author")
+    @PutMapping(value = "/update")
     //@RolesAllowed("ROLE_ADMIN")
     public ResponseEntity<?> updateAuthor( @RequestBody  AuthorCreateForm authorCreateForm) throws EntityNotFoundException {
         authorService.updateAuthor(authorCreateForm);
         return new ResponseEntity<String>("Update successfully!", HttpStatus.OK);
     }
+
+
 
 }
