@@ -18,11 +18,11 @@ import javax.persistence.EntityNotFoundException;
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
 	// default exception
-	@ExceptionHandler({ Exception.class })
-	public ResponseEntity<Object> handleAll(Exception exception) {
-		ApiErrorResponse error = new ApiErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Server Error! Contact admin at lechinh737@gmail.com", exception.getMessage());
-		return new ResponseEntity<>(error, error.getStatus());
-	}
+//	@ExceptionHandler({ Exception.class })
+//	public ResponseEntity<Object> handleAll(Exception exception) {
+//		ApiErrorResponse error = new ApiErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Server Error! Contact admin at lechinh737@gmail.com", exception.getMessage());
+//		return new ResponseEntity<>(error, error.getStatus());
+//	}
 
 	@ExceptionHandler(EmptyResultDataAccessException.class)
 	public ResponseEntity<Object> handleEntityNotFound(EmptyResultDataAccessException exception) {
