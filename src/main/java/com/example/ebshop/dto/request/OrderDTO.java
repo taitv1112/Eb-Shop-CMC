@@ -1,7 +1,6 @@
 package com.example.ebshop.dto.request;
 
 import lombok.Data;
-
 import java.util.List;
 
 @Data

@@ -1,19 +1,20 @@
 package com.example.ebshop.service.impl;
 
 import com.example.ebshop.dto.request.AuthorDTO;
+import com.example.ebshop.dto.request.BookDTO;
 import com.example.ebshop.dto.request.BookQuantityDTO;
 import com.example.ebshop.dto.request.SavedBookDTO;
 import com.example.ebshop.dto.response.PublisherDTO;
 import com.example.ebshop.dto.response.TopSellingBooks;
 import com.example.ebshop.dto.response.UpdatedBookDTO;
 import com.example.ebshop.entity.Book;
+import com.example.ebshop.entity.OrderDetail;
 import com.example.ebshop.repository.BookRepository;
 import com.example.ebshop.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ObjectUtils;
 
 import java.util.List;
 
@@ -87,8 +88,7 @@ public class BookServiceImpl implements BookService {
     private UpdatedBookDTO getBookByIdToUpdate(String id) {
         Book book = findBookById(id);
         if(book.getDeleted()) return null;
-        UpdatedBookDTO bookDTO = bookRepository.findAllById(UpdatedBookDTO.class,id);
-        return bookDTO;
+        return bookRepository.findAllById(UpdatedBookDTO.class,id);
     }
 
     // Đổi delete từ false sang true
@@ -97,9 +97,9 @@ public class BookServiceImpl implements BookService {
     }
 
     // Check xem đã xóa chưa
-    private boolean isDeleted(String id) {
-        Book book = bookRepository.isDeleted(id);
-        return book != null;
+    @Override
+    public boolean isDeleted(String id) {
+        return bookRepository.isDeleted(id);
     }
 
     // Lưu sách hoặc update sách
@@ -147,19 +147,8 @@ public class BookServiceImpl implements BookService {
 
     //Lấy ra số lượng sách
     @Override
-    public boolean checkQuantity(String id) {
-        List<BookQuantityDTO> quantity = bookRepository.findQuantityById(BookQuantityDTO.class,id);
-        if(ObjectUtils.isEmpty(quantity)) return false;
-        for (BookQuantityDTO book:quantity) {
-            if(book.getQuantityCurrent()>0) return true;
-        }
-        return false;
-    }
-
-    //Xóa NXB khỏi sách
-    @Override
-    public void removePublisher(String id) {
-        bookRepository.removePublisher(id);
+    public boolean checkPublisher(String id) {
+        return bookRepository.checkPublisher(id);
     }
 
     //Lấy ra 5 thằng bán chạy nhất tại NXB
@@ -172,5 +161,17 @@ public class BookServiceImpl implements BookService {
     @Override
     public Long getCountOfBookByPublisherId(String id) {
         return bookRepository.countByPublisherId(id);
+    }
+
+    @Override
+    public boolean isEnoughBook(BookDTO book) {
+        return bookRepository.isEnoughBook(book.getId());
+    }
+
+    @Override
+    public void soldBook(List<OrderDetail> orderDetails) {
+        for (OrderDetail orderDetail:orderDetails) {
+           bookRepository.soldBook(orderDetail.getQuantity(),orderDetail.getBook().getId());
+        }
     }
 }

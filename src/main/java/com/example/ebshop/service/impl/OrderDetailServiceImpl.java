@@ -37,7 +37,7 @@ public class OrderDetailServiceImpl implements OrderDetailService {
                         .toString();
             }
             while(orderDetailRepository.existsById(generatedString));
-            OrderDetail orderDetail = new OrderDetail(generatedString,bookService.findBookById(orderDTO.getBook().getId()),orderDTO.getQuantity(),orderDTO.getPrice());
+            OrderDetail orderDetail = new OrderDetail(generatedString,bookService.findBookById(orderDTO.getBook().getId()),orderDTO.getQuantity());
             list.add(orderDetail);
             orderDetailRepository.save(orderDetail);
         }

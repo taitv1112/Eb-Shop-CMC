@@ -64,8 +64,7 @@ public class PublisherServiceImpl implements PublisherService {
     public ResponseEntity<String> deletePublisher(String id) {
         PublisherDTO publisherDTO = publisherRepository.findPublisherById(PublisherDTO.class, id);
         if(ObjectUtils.isEmpty(publisherDTO)) return ResponseEntity.status(HttpStatus.OK).body("Not found!");
-        if(bookService.checkQuantity(publisherDTO.getId())) return ResponseEntity.status(HttpStatus.OK).body("There are still books in storage!");
-        bookService.removePublisher(publisherDTO.getId());
+        if(bookService.checkPublisher(publisherDTO.getId())) return ResponseEntity.status(HttpStatus.OK).body("There are still books in storage!");
         publisherRepository.deleteById(id);
         return ResponseEntity.status(HttpStatus.OK).body("Delete success!");
     }

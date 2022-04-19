@@ -12,6 +12,7 @@ public interface UpdatedBookDTO {
     BigDecimal getPrice();
     Date getPublishedYear();
     Long getQuantityCurrent();
+
     interface authorDTO{
         String getId();
         String getName();
