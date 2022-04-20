@@ -17,10 +17,14 @@ public class OrderDetail {
     private Long quantity;
     private BigDecimal price;
 
-    public OrderDetail(Orders order, Book book, Long quantity, BigDecimal price) {
+    public OrderDetail() {
+    }
+
+    public OrderDetail(String id,Orders order, Book book, Long quantity, BigDecimal price) {
         this.order = order;
         this.book = book;
         this.quantity = quantity;
         this.price = price;
+        this.id=id;
     }
 }

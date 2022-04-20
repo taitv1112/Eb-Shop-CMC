@@ -13,9 +13,15 @@ import com.example.ebshop.repository.IOrderDetailRepository;
 import com.example.ebshop.repository.IOrderRepository;
 import com.example.ebshop.service.IOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Service
 public class OrderServiceImpl implements IOrderService {
+    static int id = 0;
+    static int idO = 0;
+    static int idOd = 0;
     @Autowired
     IOrderRepository iOrderRepository;
     @Autowired
@@ -32,18 +38,26 @@ public class OrderServiceImpl implements IOrderService {
         if(iCustomerReposiroty.existsCustomerByEmail(orderDTO.getCustomerDTO().getEmail())){
             customer = iCustomerReposiroty.findByEmail(orderDTO.getCustomerDTO().getEmail());
         }else {
-             customer = iCustomerReposiroty.save(new Customer(orderDTO.getCustomerDTO().getEmail(),orderDTO.getCustomerDTO().getName(),orderDTO.getCustomerDTO().getPhone())) ;
+            String idCustomer = ""+id;
+            id++;
+             customer = iCustomerReposiroty.save(new Customer(idCustomer,orderDTO.getCustomerDTO().getEmail(),orderDTO.getCustomerDTO().getName(),orderDTO.getCustomerDTO().getPhone())) ;
+
         }
-        Orders orders =  iOrderRepository.save(new Orders(customer,IOrderService.PENDING));
+        String idOrders = ""+idO;
+        idO++;
+        Orders orders =  iOrderRepository.save(new Orders(idOrders,customer,IOrderService.PENDING));
         for (OrderDetailDTO o:orderDTO.getOrderDetailDTOS()) {
             Book book = iBookRepository.getById(o.getBookId());
             if(book.getQuantityCurrent() < o.getQuantity() || o.getQuantity() < 0){
-                throw new ExceptionHandling("403",book.getName() +" are " + book.getQuantityCurrent() + " available");
+                throw new ExceptionHandling("BAD_REQUEST",book.getName() +" are " + book.getQuantityCurrent() + " available");
             }
-            iOrderDetailRepository.save(new OrderDetail(orders,book,o.getQuantity(),o.getPrice()));
-            book.setQuantityCurrent(o.getQuantity()-book.getQuantityCurrent());
+            String idOrdersd = ""+idOd;
+            idOd++;
+            iOrderDetailRepository.save(new OrderDetail(idOrdersd,orders,book,o.getQuantity(),o.getPrice()));
+            book.setQuantityCurrent(book.getQuantityCurrent() - o.getQuantity());
             book.setQuantitySold(book.getQuantitySold()+o.getQuantity());
             iBookRepository.save(book);
         }
     }
+
 }

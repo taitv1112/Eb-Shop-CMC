@@ -15,7 +15,11 @@ public class Customer {
     private String name;
     private String address;
 
-    public Customer(String email, String phone, String name) {
+    public Customer() {
+    }
+
+    public Customer(String id,String email, String phone, String name) {
+        this.id = id;
         this.email = email;
         this.phone = phone;
         this.name = name;
