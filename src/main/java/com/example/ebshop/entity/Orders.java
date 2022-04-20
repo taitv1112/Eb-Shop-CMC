@@ -13,4 +13,13 @@ public class Orders {
     private Customer customer;
     private String status ;
 
+    public Orders(String id, Customer customer, String status) {
+        this.id = id;
+        this.customer = customer;
+        this.status = status;
+    }
+
+    public Orders() {
+
+    }
 }

@@ -36,4 +36,5 @@ public class BookController {
     public ResponseEntity<Book> edit(@RequestBody Book book){
         return new ResponseEntity<>(bookService.save(book),HttpStatus.OK);
     }
+
 }

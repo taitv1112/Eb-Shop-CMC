@@ -1,5 +1,7 @@
 package com.example.ebshop.service;
 
+import com.example.ebshop.dto.AuthorDetailDTO;
+import com.example.ebshop.dto.PublisherDetailDTO;
 import com.example.ebshop.entity.Author;
 import com.example.ebshop.entity.Publisher;
 
@@ -10,4 +12,6 @@ public interface IPublisherService {
     Publisher save(Publisher publisher);
     void delete(String id);
     Publisher findById(String id);
+
+    PublisherDetailDTO findPublisherById(String id);
 }

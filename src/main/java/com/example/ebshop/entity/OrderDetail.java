@@ -13,7 +13,7 @@ public class OrderDetail {
     @ManyToOne
     private Orders order;
     @ManyToOne
-    private  Book book;
+    private Book book;
     private Long quantity;
     private BigDecimal price;
 }
