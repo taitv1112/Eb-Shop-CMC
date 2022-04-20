@@ -8,11 +8,11 @@ import java.util.List;
 
 @Data
 public class OrderInforDTO {
-    private CustomerDTO customerDTO;
+    private ICustomerDTO customerDTO;
     private  List<InforOrderDetailDTO> orderDetailDTOList;
     private BigDecimal totalBill;
 
-    public OrderInforDTO(CustomerDTO customerDTO, List<InforOrderDetailDTO> orderDetailDTOList, BigDecimal totalBill) {
+    public OrderInforDTO(ICustomerDTO customerDTO, List<InforOrderDetailDTO> orderDetailDTOList, BigDecimal totalBill) {
         this.customerDTO = customerDTO;
         this.orderDetailDTOList = orderDetailDTOList;
         this.totalBill = totalBill;

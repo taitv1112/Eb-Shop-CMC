@@ -1,8 +1,10 @@
 package com.example.ebshop.service.impl;
 
 import com.example.ebshop.config.exception.ExceptionHandling;
+import com.example.ebshop.dto.request.CustomerDTO;
 import com.example.ebshop.dto.request.OrderDTO;
 import com.example.ebshop.dto.request.OrderDetailDTO;
+import com.example.ebshop.dto.response.ICustomerDTO;
 import com.example.ebshop.dto.response.OrderInforDTO;
 import com.example.ebshop.entity.Book;
 import com.example.ebshop.entity.Customer;
@@ -64,7 +66,9 @@ public class OrderServiceImpl implements IOrderService {
 
     @Override
     public OrderInforDTO inforOder(String id) {
-        return new OrderInforDTO(iCustomerReposiroty.findByOrderById(id),iOrderDetailRepository.getOrderDetails(id),iOrderDetailRepository.totalBillByOrder(id));
+        ICustomerDTO customerDTO = iCustomerReposiroty.findByOrderById(id);
+
+        return new OrderInforDTO(customerDTO,iOrderDetailRepository.getOrderDetails(id),iOrderDetailRepository.totalBillByOrder(id));
     }
 
 }
