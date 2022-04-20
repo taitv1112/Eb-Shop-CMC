@@ -17,15 +17,7 @@ public class OrderController {
     @Autowired
     IOrderService ordersService;
 
-    @PostMapping
-    public Orders save(@RequestBody Customer customer){
-        customerService.saveCustomer(customer);
-        String status = "Trang thai";
-        String id = "1";
-        Orders orders = new Orders(id,customer,status);
-        ordersService.saveOrders(orders);
-        return orders;
-    }
+
 
 
 
