@@ -4,12 +4,12 @@ import lombok.Data;
 
 @Data
 public class OrderBookDTO {
-    private String id;
+    private String getBookId;
 
     public OrderBookDTO() {
     }
 
-    public OrderBookDTO(String id) {
-        this.id = id;
+    public OrderBookDTO(String getBookId) {
+        this.getBookId = getBookId;
     }
 }

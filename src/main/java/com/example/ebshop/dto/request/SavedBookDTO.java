@@ -9,8 +9,8 @@ import java.util.Date;
 //DTO sách từ request vào để update hoặc thêm sách
 @Data
 public class SavedBookDTO {
-    private String id;
-    private String name;
+    private String bookId;
+    private String bookName;
     private Author author;
     private Publisher publisher;
     private BigDecimal price;

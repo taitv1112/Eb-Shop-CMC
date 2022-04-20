@@ -13,4 +13,5 @@ public interface CustomerService {
     Customer save(CustomerDTO customer);
     void buyBook(List<OrderDetail> orderDetails,String email);
     ResponseEntity<?> fiveBestCustomer();
+    ResponseEntity<?> fiveMostBuyCustomer();
 }

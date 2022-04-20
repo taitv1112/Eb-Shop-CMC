@@ -11,10 +11,11 @@ import com.example.ebshop.entity.Book;
 import com.example.ebshop.entity.OrderDetail;
 import com.example.ebshop.repository.BookRepository;
 import com.example.ebshop.service.BookService;
+import com.example.ebshop.specification.model.Search;
+import com.example.ebshop.specification.service.BookSpecificationBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -50,7 +51,7 @@ public class BookServiceImpl implements BookService {
 
     //Cập nhật lại sách đã tồn tại
     private void updateExistingBook(SavedBookDTO book) {
-        Book oldBook = findBookById(book.getId());
+        Book oldBook = findBookById(book.getBookId());
         if(oldBook.getDeleted()) return;
         transferDataFromSaveBookToBook(book, oldBook);
         saveBook(oldBook);
@@ -59,8 +60,8 @@ public class BookServiceImpl implements BookService {
     // lưu sách mới
     private void saveNewBook(SavedBookDTO newBook) {
         Book book = new Book();
-        if(newBook.getId().equals("0")||newBook.getId()==null) book.setId("0");
-        else book.setId(newBook.getId());
+        if(newBook.getBookId().equals("0")||newBook.getBookId()==null) book.setBookId("0");
+        else book.setBookId(newBook.getBookId());
         transferDataFromSaveBookToBook(newBook,book);
         book.setDeleted(false);
         book.setQuantitySold(0L);
@@ -69,8 +70,8 @@ public class BookServiceImpl implements BookService {
 
     // Chuyển dữ liệu từ DTO
     private void transferDataFromSaveBookToBook(SavedBookDTO book, Book oldBook) {
-         if(book.getName()!=null){
-            oldBook.setName(book.getName());
+         if(book.getBookName()!=null){
+            oldBook.setBookName(book.getBookName());
         }
         if(book.getAuthor()!=null){
             oldBook.setAuthor(book.getAuthor());
@@ -96,7 +97,7 @@ public class BookServiceImpl implements BookService {
     private UpdatedBookDTO getBookByIdToUpdate(String id) {
         Book book = findBookById(id);
         if(book.getDeleted()) return null;
-        return bookRepository.findAllById(UpdatedBookDTO.class,id);
+        return bookRepository.findAllByBookId(UpdatedBookDTO.class,id);
     }
 
     // Đổi delete từ false sang true
@@ -139,11 +140,17 @@ public class BookServiceImpl implements BookService {
         return total;
     }
 
+    @Override
+    public List<Book> search(Search search) {
+        BookSpecificationBuilder builder = new BookSpecificationBuilder(search);
+        return bookRepository.findAll(builder.build());
+    }
+
     // Lưu sách hoặc update sách
     @Override
     public ResponseEntity<String> saveBookToStorage(SavedBookDTO book) {
-        if(isDeleted(book.getId())) return ResponseEntity.status(HttpStatus.OK).body("Deleted!");
-        if(isBookExist(book.getId())){
+        if(isDeleted(book.getBookId())) return ResponseEntity.status(HttpStatus.OK).body("Deleted!");
+        if(isBookExist(book.getBookId())){
             updateExistingBook(book);
             return ResponseEntity.status(HttpStatus.OK).body("Updated success!");
         } else {
@@ -179,7 +186,7 @@ public class BookServiceImpl implements BookService {
     //Lấy ra số lượng sách
     @Override
     public Long getNumberOfBooks(AuthorDTO authorDTO) {
-        return bookRepository.countByAuthor(authorDTO.getId());
+        return bookRepository.countByAuthor(authorDTO.getAuthorId());
     }
 
     //Lấy ra số lượng sách
@@ -191,7 +198,7 @@ public class BookServiceImpl implements BookService {
     //Lấy ra 5 thằng bán chạy nhất tại NXB
     @Override
     public List<TopSellingBooks> find5BestSellingBook(PublisherDTO publisher) {
-        return bookRepository.find5BestSellingBook(TopSellingBooks.class,publisher.getId());
+        return bookRepository.find5BestSellingBook(TopSellingBooks.class,publisher.getPublisherId());
     }
 
     //Đếm số sách của NXB
@@ -203,14 +210,14 @@ public class BookServiceImpl implements BookService {
     //Kiểm tra đủ sách ko
     @Override
     public boolean isEnoughBook(OrderBookDTO book) {
-        return bookRepository.isEnoughBook(book.getId());
+        return bookRepository.isEnoughBook(book.getGetBookId());
     }
 
     //Thêm sách đã bán và giảm sách hiện tại
     @Override
     public void soldBook(List<OrderDetail> orderDetails) {
         for (OrderDetail orderDetail:orderDetails) {
-           bookRepository.addSoldBook(orderDetail.getQuantity(),orderDetail.getBook().getId());
+           bookRepository.addSoldBook(orderDetail.getQuantity(),orderDetail.getBook().getBookId());
         }
     }
 }

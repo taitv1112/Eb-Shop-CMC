@@ -15,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -29,8 +28,8 @@ public class PublisherServiceImpl implements PublisherService {
     //Thêm NXB
     @Override
     public ResponseEntity<String> save(Publisher publisher) {
-        if (publisher.getId() == null) return ResponseEntity.status(HttpStatus.OK).body("Not found ID");
-        if (publisher.getName() == null) return ResponseEntity.status(HttpStatus.OK).body("Not found name");
+        if (publisher.getPublisherId() == null) return ResponseEntity.status(HttpStatus.OK).body("Not found ID");
+        if (publisher.getPublisherName() == null) return ResponseEntity.status(HttpStatus.OK).body("Not found name");
         publisherRepository.save(publisher);
         return ResponseEntity.status(HttpStatus.OK).body("Add success!");
     }
@@ -38,13 +37,13 @@ public class PublisherServiceImpl implements PublisherService {
     //tìm nhà xuất bản
     @Override
     public ResponseEntity<?> findById(String id) {
-        PublisherDTO publisher = publisherRepository.findPublisherById(PublisherDTO.class, id);
+        PublisherDTO publisher = publisherRepository.findPublisherBypublisherId(PublisherDTO.class, id);
         PublisherAndBookDTO publisherAndBookDTO = new PublisherAndBookDTO();
         publisherAndBookDTO.setPublisherDTO(publisher);
         if (ObjectUtils.isEmpty(publisher)) return ResponseEntity.status(HttpStatus.OK).body("Not found!");
         List<TopSellingBooks> bookDTO = bookService.find5BestSellingBook(publisher);
         publisherAndBookDTO.setTopSellingBooks(bookDTO);
-        Long count = bookService.getCountOfBookByPublisherId(publisher.getId());
+        Long count = bookService.getCountOfBookByPublisherId(publisher.getPublisherId());
         publisherAndBookDTO.setCount(count);
         return new ResponseEntity<>(publisherAndBookDTO, HttpStatus.OK);
     }
@@ -52,11 +51,11 @@ public class PublisherServiceImpl implements PublisherService {
     //Update NXB
     @Override
     public ResponseEntity<String> update(Publisher publisher) {
-        if (publisher.getId() == null) return ResponseEntity.status(HttpStatus.OK).body("Not found id!");
-        PublisherDTO publisherDTO = publisherRepository.findPublisherById(PublisherDTO.class, publisher.getId());
+        if (publisher.getPublisherId() == null) return ResponseEntity.status(HttpStatus.OK).body("Not found id!");
+        PublisherDTO publisherDTO = publisherRepository.findPublisherBypublisherId(PublisherDTO.class, publisher.getPublisherId());
         if (ObjectUtils.isEmpty(publisherDTO)) return ResponseEntity.status(HttpStatus.OK).body("Not found publisher!");
-        if (publisher.getName() == null) {
-            publisher.setName(publisherDTO.getName());
+        if (publisher.getPublisherName() == null) {
+            publisher.setPublisherName(publisherDTO.getPublisherName());
         }
         publisherRepository.save(publisher);
         return ResponseEntity.status(HttpStatus.OK).body("Add success!");
@@ -65,9 +64,8 @@ public class PublisherServiceImpl implements PublisherService {
     //Xóa NXB
     @Override
     public ResponseEntity<String> deletePublisher(String id) {
-        PublisherDTO publisherDTO = publisherRepository.findPublisherById(PublisherDTO.class, id);
-        if (ObjectUtils.isEmpty(publisherDTO)) return ResponseEntity.status(HttpStatus.OK).body("Not found!");
-        if (bookService.checkPublisher(publisherDTO.getId()))
+        if (!publisherRepository.existsById(id)) return ResponseEntity.status(HttpStatus.OK).body("Not found!");
+        if (bookService.checkPublisher(id))
             return ResponseEntity.status(HttpStatus.OK).body("There are still books in storage!");
         publisherRepository.deleteById(id);
         return ResponseEntity.status(HttpStatus.OK).body("Delete success!");
@@ -84,7 +82,7 @@ public class PublisherServiceImpl implements PublisherService {
     @Override
     public void soldBook(List<OrderDetail> orderDetails) {
         for (OrderDetail orderDetail : orderDetails) {
-            publisherRepository.soldBook(orderDetail.getQuantity(), orderDetail.getBook().getPublisher().getId());
+            publisherRepository.soldBook(orderDetail.getQuantity(), orderDetail.getBook().getPublisher().getPublisherId());
         }
     }
 }

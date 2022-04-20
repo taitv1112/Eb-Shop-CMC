@@ -20,11 +20,11 @@ public interface ShowOrderDTO {
     }
 
     interface BookDTO{
-        String getName();
+        String getBookName();
         AuthorDTO getAuthor();
     }
 
     interface AuthorDTO{
-        String getName();
+        String getAuthorName();
     }
 }

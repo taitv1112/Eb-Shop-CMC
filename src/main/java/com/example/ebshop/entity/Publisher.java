@@ -9,9 +9,9 @@ import javax.validation.constraints.NotEmpty;
 public class Publisher {
     @Id
     @Column(length = 254)
-    private String id ;
+    private String publisherId;
     @NotEmpty
-    private String name;
+    private String publisherName;
     private String website;
     private String address;
     private Long totalQuantitySold;
@@ -19,9 +19,9 @@ public class Publisher {
     public Publisher() {
     }
 
-    public Publisher(String id, String name, String website, String address, Long totalQuantitySold) {
-        this.id = id;
-        this.name = name;
+    public Publisher(String publisherId, String publisherName, String website, String address, Long totalQuantitySold) {
+        this.publisherId = publisherId;
+        this.publisherName = publisherName;
         this.website = website;
         this.address = address;
         this.totalQuantitySold = totalQuantitySold;
