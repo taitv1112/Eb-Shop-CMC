@@ -42,6 +42,11 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 		ApiErrorResponse error = new ApiErrorResponse(exception.getStatus(), exception.getMessage());
 		return new ResponseEntity<>(error, error.getStatus());
 	}
+	@ExceptionHandler(javax.validation.ConstraintViolationException.class)
+	public ResponseEntity<Object> handleEntityNotFound(javax.validation.ConstraintViolationException exception) {
+		ApiErrorResponse error = new ApiErrorResponse(HttpStatus.BAD_REQUEST,"Email not available");
+		return new ResponseEntity<>(error, error.getStatus());
+	}
 
 
 //	// not found url handler

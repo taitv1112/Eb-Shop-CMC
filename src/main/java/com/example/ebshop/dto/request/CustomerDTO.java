@@ -7,7 +7,7 @@ import javax.validation.constraints.Email;
 @Data
 public class CustomerDTO {
     private String name;
-    @Email
+    @Email(regexp = "Email not avaliable")
     private String email;
     private String phone;
 }

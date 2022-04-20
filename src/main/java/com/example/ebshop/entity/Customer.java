@@ -10,6 +10,7 @@ public class Customer {
     @Id
     @Column(length = 254)
     private String id;
+    @Email(message = "Email not avaliable")
     private String email;
     private String phone;
     private String name;

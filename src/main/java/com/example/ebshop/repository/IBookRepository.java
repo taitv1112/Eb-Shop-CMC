@@ -28,4 +28,5 @@ public interface IBookRepository extends JpaRepository<Book,String> {
                                         "WHERE a.id = :id " +
                                         "ORDER BY b.quantity_sold DESC limit 3" )
     List<BookDTO> getThreeBestSoldBooksByAuthorId(@Param("id") String id);
+
 }
