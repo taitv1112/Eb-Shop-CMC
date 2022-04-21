@@ -15,6 +15,5 @@ public interface CustomerRepository extends JpaRepository<Customer,String> {
     @Transactional
     @Query("update Customer set totalBoughtBook = totalBoughtBook+?1 , totalMoneySpent = totalMoneySpent+?2 where email=?3")
     void buyBook(Long quantity, BigDecimal price,String email);
-
     <T> List<T> findAllBy(Class<T> classType);
 }

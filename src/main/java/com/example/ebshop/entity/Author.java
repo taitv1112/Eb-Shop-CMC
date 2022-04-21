@@ -7,9 +7,9 @@ import javax.persistence.*;
 @Data
 public class Author {
     @Id
-    @Column(name = "id",length = 254)
-    private String id ;
-    private String name;
+    @Column(length = 254)
+    private String authorId;
+    private String authorName;
     private String website;
     private String organization;
     private Long totalQuantitySold;
@@ -17,9 +17,9 @@ public class Author {
     public Author() {
     }
 
-    public Author(String id, String name, String website, String organization, Long totalQuantitySold) {
-        this.id = id;
-        this.name = name;
+    public Author(String authorId, String authorName, String website, String organization, Long totalQuantitySold) {
+        this.authorId = authorId;
+        this.authorName = authorName;
         this.website = website;
         this.organization = organization;
         this.totalQuantitySold = totalQuantitySold;

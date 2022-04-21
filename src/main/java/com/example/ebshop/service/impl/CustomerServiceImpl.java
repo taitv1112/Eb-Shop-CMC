@@ -1,6 +1,7 @@
 package com.example.ebshop.service.impl;
 
-import com.example.ebshop.dto.SortForCustomer;
+import com.example.ebshop.dto.SortForCustomerBook;
+import com.example.ebshop.dto.SortForCustomerMoney;
 import com.example.ebshop.dto.request.CustomerDTO;
 import com.example.ebshop.dto.response.BestCustomerDTO;
 import com.example.ebshop.entity.Customer;
@@ -46,7 +47,15 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public ResponseEntity<?> fiveBestCustomer() {
         List<BestCustomerDTO> list = customerRepository.findAllBy(BestCustomerDTO.class);
-        list.sort(new SortForCustomer());
+        list.sort(new SortForCustomerMoney());
+        if(list.size()>5) return ResponseEntity.status(HttpStatus.OK).body(list.subList(0,4));
+        return ResponseEntity.status(HttpStatus.OK).body(list);
+    }
+
+    @Override
+    public ResponseEntity<?> fiveMostBuyCustomer() {
+        List<BestCustomerDTO> list = customerRepository.findAllBy(BestCustomerDTO.class);
+        list.sort(new SortForCustomerBook());
         if(list.size()>5) return ResponseEntity.status(HttpStatus.OK).body(list.subList(0,4));
         return ResponseEntity.status(HttpStatus.OK).body(list);
     }

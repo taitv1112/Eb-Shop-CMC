@@ -8,7 +8,6 @@ import com.example.ebshop.service.OrderDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -37,7 +36,7 @@ public class OrderDetailServiceImpl implements OrderDetailService {
                         .toString();
             }
             while(orderDetailRepository.existsById(generatedString));
-            OrderDetail orderDetail = new OrderDetail(generatedString,bookService.findBookById(orderDTO.getBook().getId()),orderDTO.getQuantity());
+            OrderDetail orderDetail = new OrderDetail(generatedString,bookService.findBookById(orderDTO.getBook().getGetBookId()),orderDTO.getQuantity());
             list.add(orderDetail);
             orderDetailRepository.save(orderDetail);
         }

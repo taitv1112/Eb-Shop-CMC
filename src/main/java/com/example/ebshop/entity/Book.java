@@ -11,9 +11,9 @@ import java.util.Date;
 public class Book {
     @Id
     @Column(length = 254)
-    private String id;
+    private String bookId;
     @NotEmpty
-    private String name;
+    private String bookName;
     @ManyToOne
     private Author author;
     @ManyToOne

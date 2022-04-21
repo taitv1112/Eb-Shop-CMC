@@ -2,19 +2,19 @@ package com.example.ebshop.dto.response;
 
 
 public interface BookDetailsDTO {
-    String getId();
-    String getName();
+    String getBookId();
+    String getBookName();
     AuthorDTO getAuthor();
     PublisherDTO getPublisher();
     Long getQuantitySold();
 
   interface AuthorDTO{
-      String getId();
-      String getName();
+      String getAuthorId();
+      String getAuthorName();
   }
 
   interface PublisherDTO{
-      String getId();
-      String getName();
+      String getPublisherId();
+      String getPublisherName();
   }
 }

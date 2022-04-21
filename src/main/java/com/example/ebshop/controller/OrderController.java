@@ -31,8 +31,13 @@ public class OrderController {
         return ordersService.getOrder(id);
     }
 
-    @GetMapping("/best-seller")
+    @GetMapping("/best-buyer")
     private ResponseEntity<?> fiveBestCustomer(){
         return customerService.fiveBestCustomer();
+    }
+
+    @GetMapping("/most-buyer")
+    private ResponseEntity<?> fiveMostBuyer(){
+        return customerService.fiveMostBuyCustomer();
     }
 }

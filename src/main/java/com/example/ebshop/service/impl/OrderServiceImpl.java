@@ -48,10 +48,10 @@ public class OrderServiceImpl implements OrdersService {
         if(ObjectUtils.isEmpty(saveOrderDTO.getCustomer())) return ResponseEntity.status(HttpStatus.OK).body("Missing customer!");
         for (OrderDetailDTO orderDetailDTO: saveOrderDTO.getOrderDetails()) {
             if(!bookService.isEnoughBook(orderDetailDTO.getBook())){
-                return ResponseEntity.status(HttpStatus.OK).body(orderDetailDTO.getBook().getId()+" not enough book!");
+                return ResponseEntity.status(HttpStatus.OK).body(orderDetailDTO.getBook().getGetBookId()+" not enough book!");
             }
-            if(!bookService.isDeleted(orderDetailDTO.getBook().getId())){
-                return ResponseEntity.status(HttpStatus.OK).body(orderDetailDTO.getBook().getId()+" got deleted!");
+            if(!bookService.isDeleted(orderDetailDTO.getBook().getGetBookId())){
+                return ResponseEntity.status(HttpStatus.OK).body(orderDetailDTO.getBook().getGetBookId()+" got deleted!");
             }
         }
         Customer customer = customerService.findByID(saveOrderDTO.getCustomer().getEmail());

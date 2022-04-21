@@ -5,8 +5,8 @@ import java.util.Date;
 
 //DTO để lấy sách ra từ Id cho update
 public interface UpdatedBookDTO {
-    String getId();
-    String getName();
+    String getBookId();
+    String getBookName();
     authorDTO getAuthor();
     publisherDTO getPublisher();
     BigDecimal getPrice();
@@ -14,11 +14,11 @@ public interface UpdatedBookDTO {
     Long getQuantityCurrent();
 
     interface authorDTO{
-        String getId();
-        String getName();
+        String getAuthorId();
+        String getAuthorName();
     }
     interface publisherDTO{
-        String getId();
-        String getName();
+        String getPublisherId();
+        String getPublisherName();
     }
 }
