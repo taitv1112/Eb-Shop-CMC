@@ -10,7 +10,6 @@ public class Publisher {
     @Id
     @Column(length = 254)
     private String id ;
-    @NotEmpty
     private String name;
     private String website;
     private String address;

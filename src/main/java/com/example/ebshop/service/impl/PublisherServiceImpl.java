@@ -1,6 +1,7 @@
 package com.example.ebshop.service.impl;
 
 import com.example.ebshop.dto.SortForPublisher;
+import com.example.ebshop.dto.request.SavePublisherDTO;
 import com.example.ebshop.dto.response.PublisherAndBookDTO;
 import com.example.ebshop.dto.response.PublisherDTO;
 import com.example.ebshop.dto.response.TopSellingBooks;
@@ -14,23 +15,22 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
-
-import java.util.Collections;
 import java.util.List;
 
 @Service
 public class PublisherServiceImpl implements PublisherService {
     @Autowired
-    PublisherRepository publisherRepository;
+    private PublisherRepository publisherRepository;
 
     @Autowired
-    BookService bookService;
+    private BookService bookService;
 
     //Thêm NXB
     @Override
-    public ResponseEntity<String> save(Publisher publisher) {
-        if (publisher.getId() == null) return ResponseEntity.status(HttpStatus.OK).body("Not found ID");
-        if (publisher.getName() == null) return ResponseEntity.status(HttpStatus.OK).body("Not found name");
+    public ResponseEntity<String> save(SavePublisherDTO publisherDTO) {
+        if (publisherDTO.getId() == null) return ResponseEntity.status(HttpStatus.OK).body("Not found ID");
+        if (publisherDTO.getName() == null) return ResponseEntity.status(HttpStatus.OK).body("Not found name");
+        Publisher publisher = new Publisher(publisherDTO.getId(), publisherDTO.getName(),publisherDTO.getWebsite(),publisherDTO.getWebsite(),0L);
         publisherRepository.save(publisher);
         return ResponseEntity.status(HttpStatus.OK).body("Add success!");
     }
@@ -51,13 +51,20 @@ public class PublisherServiceImpl implements PublisherService {
 
     //Update NXB
     @Override
-    public ResponseEntity<String> update(Publisher publisher) {
-        if (publisher.getId() == null) return ResponseEntity.status(HttpStatus.OK).body("Not found id!");
-        PublisherDTO publisherDTO = publisherRepository.findPublisherById(PublisherDTO.class, publisher.getId());
+    public ResponseEntity<String> update(SavePublisherDTO savePublisherDTO) {
+        if (savePublisherDTO.getId() == null) return ResponseEntity.status(HttpStatus.OK).body("Not found id!");
+        PublisherDTO publisherDTO = publisherRepository.findPublisherById(PublisherDTO.class, savePublisherDTO.getId());
         if (ObjectUtils.isEmpty(publisherDTO)) return ResponseEntity.status(HttpStatus.OK).body("Not found publisher!");
-        if (publisher.getName() == null) {
-            publisher.setName(publisherDTO.getName());
+        if (savePublisherDTO.getName() == null) {
+            savePublisherDTO.setName(publisherDTO.getName());
         }
+        if(savePublisherDTO.getAddress()==null){
+            savePublisherDTO.setAddress(publisherDTO.getAddress());
+        }
+        if(savePublisherDTO.getWebsite()==null){
+            savePublisherDTO.setWebsite(publisherDTO.getWebsite());
+        }
+        Publisher publisher = new Publisher(savePublisherDTO.getId(), savePublisherDTO.getName(), savePublisherDTO.getWebsite(), savePublisherDTO.getAddress(),0L);
         publisherRepository.save(publisher);
         return ResponseEntity.status(HttpStatus.OK).body("Add success!");
     }
@@ -86,5 +93,10 @@ public class PublisherServiceImpl implements PublisherService {
         for (OrderDetail orderDetail : orderDetails) {
             publisherRepository.soldBook(orderDetail.getQuantity(), orderDetail.getBook().getPublisher().getId());
         }
+    }
+
+    @Override
+    public Publisher findPublisherById(String id) {
+        return publisherRepository.findById(id).get();
     }
 }

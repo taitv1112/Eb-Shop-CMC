@@ -5,36 +5,27 @@ import com.example.ebshop.entity.OrderDetail;
 import com.example.ebshop.repository.OrderDetailRepository;
 import com.example.ebshop.service.BookService;
 import com.example.ebshop.service.OrderDetailService;
+import com.example.ebshop.service.generateId.GenerateRandomId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 @Service
 public class OrderDetailServiceImpl implements OrderDetailService {
     @Autowired
-    OrderDetailRepository orderDetailRepository;
+    private OrderDetailRepository orderDetailRepository;
 
     @Autowired
-    BookService bookService;
+    private BookService bookService;
 
     @Override
     public List<OrderDetail> save(List<OrderDetailDTO> orderDetailsDTO) {
         List<OrderDetail> list = new ArrayList<>();
         for (OrderDetailDTO orderDTO : orderDetailsDTO) {
             String generatedString;
-            do {
-                int leftLimit = 97; // letter 'a'
-                int rightLimit = 122; // letter 'z'
-                int targetStringLength = 10;
-                Random random = new Random();
-                generatedString = random.ints(leftLimit, rightLimit + 1)
-                        .limit(targetStringLength)
-                        .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
-                        .toString();
+            do{
+             generatedString = GenerateRandomId.generate();
             }
             while(orderDetailRepository.existsById(generatedString));
             OrderDetail orderDetail = new OrderDetail(generatedString,bookService.findBookById(orderDTO.getBook().getId()),orderDTO.getQuantity());
@@ -43,4 +34,5 @@ public class OrderDetailServiceImpl implements OrderDetailService {
         }
         return list;
     }
+
 }

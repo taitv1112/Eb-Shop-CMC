@@ -10,28 +10,40 @@ import com.example.ebshop.dto.response.UpdatedBookDTO;
 import com.example.ebshop.entity.Book;
 import com.example.ebshop.entity.OrderDetail;
 import com.example.ebshop.repository.BookRepository;
+import com.example.ebshop.service.AuthorService;
 import com.example.ebshop.service.BookService;
+import com.example.ebshop.service.PublisherService;
+import com.example.ebshop.service.generateId.GenerateRandomId;
+import com.example.ebshop.specification.model.PageType;
+import com.example.ebshop.specification.model.Search;
+import com.example.ebshop.specification.model.SortType;
+import com.example.ebshop.specification.service.BookSpecificationBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
 public class BookServiceImpl implements BookService {
     @Autowired
-    BookRepository bookRepository;
+    private BookRepository bookRepository;
 
-    @PersistenceContext
-    private EntityManager entityManager;
+    @Lazy
+    @Autowired
+    AuthorService authorService;
+
+    @Lazy
+    @Autowired
+    PublisherService publisherService;
 
     // lưu lại sách
+    @Transactional
     @Override
     public void saveBook(Book book) {
         bookRepository.save(book);
@@ -51,7 +63,7 @@ public class BookServiceImpl implements BookService {
     //Cập nhật lại sách đã tồn tại
     private void updateExistingBook(SavedBookDTO book) {
         Book oldBook = findBookById(book.getId());
-        if(oldBook.getDeleted()) return;
+        if (oldBook.getDeleted()) return;
         transferDataFromSaveBookToBook(book, oldBook);
         saveBook(oldBook);
     }
@@ -59,9 +71,15 @@ public class BookServiceImpl implements BookService {
     // lưu sách mới
     private void saveNewBook(SavedBookDTO newBook) {
         Book book = new Book();
-        if(newBook.getId().equals("0")||newBook.getId()==null) book.setId("0");
-        else book.setId(newBook.getId());
-        transferDataFromSaveBookToBook(newBook,book);
+        if (newBook.getId() == null) {
+            String generatedString;
+            do {
+                generatedString = GenerateRandomId.generate();
+            }
+            while (bookRepository.existsById(generatedString));
+            book.setId(generatedString);
+        } else book.setId(newBook.getId());
+        transferDataFromSaveBookToBook(newBook, book);
         book.setDeleted(false);
         book.setQuantitySold(0L);
         saveBook(book);
@@ -69,34 +87,34 @@ public class BookServiceImpl implements BookService {
 
     // Chuyển dữ liệu từ DTO
     private void transferDataFromSaveBookToBook(SavedBookDTO book, Book oldBook) {
-         if(book.getName()!=null){
+        if (book.getName() != null) {
             oldBook.setName(book.getName());
         }
-        if(book.getAuthor()!=null){
-            oldBook.setAuthor(book.getAuthor());
+        if (book.getAuthor() != null) {
+            oldBook.setAuthor(authorService.findById(book.getAuthor().getId()));
         }
-        if(book.getPrice()!=null){
+        if (book.getPublisher() != null) {
+            oldBook.setPublisher(publisherService.findPublisherById(book.getPublisher().getId()));
+        }
+        if (book.getPrice() != null) {
             oldBook.setPrice(book.getPrice());
         }
-        if(book.getPublishedYear()!=null){
+        if (book.getPublishedYear() != null) {
             oldBook.setPublishedYear(book.getPublishedYear());
         }
-        if(book.getPublisher()!=null){
-            oldBook.setPublisher(book.getPublisher());
-        }
-        if(book.getQuantity()!=null){
-            if(oldBook.getQuantityCurrent()==null){
+        if (book.getQuantity() != null) {
+            if (oldBook.getQuantityCurrent() == null) {
                 oldBook.setQuantityCurrent(0L);
             }
-            oldBook.setQuantityCurrent(oldBook.getQuantityCurrent()+ book.getQuantity());
+            oldBook.setQuantityCurrent(oldBook.getQuantityCurrent() + book.getQuantity());
         }
     }
 
     //Lấy ra Dto của sách từ ID
     private UpdatedBookDTO getBookByIdToUpdate(String id) {
         Book book = findBookById(id);
-        if(book.getDeleted()) return null;
-        return bookRepository.findAllById(UpdatedBookDTO.class,id);
+        if (book.getDeleted()) return null;
+        return bookRepository.findAllById(UpdatedBookDTO.class, id);
     }
 
     // Đổi delete từ false sang true
@@ -113,8 +131,8 @@ public class BookServiceImpl implements BookService {
     // Lấy ra 10 quyển sách bán chạy nhất
     @Override
     public ResponseEntity<?> tenBestSellingBook() {
-        Page<BookDetailsDTO> page = bookRepository.tenBestSellingBook(BookDetailsDTO.class, PageRequest.of(0,10));
-        List<BookDetailsDTO> bookDetailsDTO=page.getContent();
+        Page<BookDetailsDTO> page = bookRepository.tenBestSellingBook(BookDetailsDTO.class, PageRequest.of(0, 10));
+        List<BookDetailsDTO> bookDetailsDTO = page.getContent();
         return ResponseEntity.status(HttpStatus.OK).body(bookDetailsDTO);
     }
 
@@ -123,7 +141,7 @@ public class BookServiceImpl implements BookService {
     public Long getTotalNumberOfSoldBookById(String id) {
         Long total = 0L;
         List<Long> soldBookList = bookRepository.findListQuantitySoldBook(id);
-        for (Long number:soldBookList) {
+        for (Long number : soldBookList) {
             total += number;
         }
         return total;
@@ -133,17 +151,41 @@ public class BookServiceImpl implements BookService {
     public Long getSoldBookByPublisherId(String id) {
         Long total = 0L;
         List<Long> soldBookList = bookRepository.findQuantitySoldBookByPublisherId(id);
-        for (Long number:soldBookList) {
+        for (Long number : soldBookList) {
             total += number;
         }
         return total;
     }
 
+    @Override
+    public ResponseEntity<?> search(Search search, SortType sortType, PageType pageType) {
+        BookSpecificationBuilder builder = new BookSpecificationBuilder(search);
+        Sort sort = sortBy(sortType);
+        Page<BookDetailsDTO> book = bookRepository.findAllExceptDeletedBook(BookDetailsDTO.class, builder.build(), PageRequest.of(pageType.getPage(), pageType.getSize(), sort));
+        return ResponseEntity.status(HttpStatus.OK).body(book);
+    }
+
+    private Sort sortBy(SortType sortType) {
+        if (sortType.getPrice() != 0) {
+            if (sortType.getPrice() == 1)
+                return Sort.by("price").descending();
+            else return Sort.by("price").ascending();
+        }
+        if (sortType.getBuy() != 0) {
+            if (sortType.getBuy() == 1)
+                return Sort.by("quantitySold").descending();
+            else return Sort.by("quantitySold").ascending();
+        }
+        if (sortType.getName() == 1)
+            return Sort.by("name").descending();
+        else return Sort.by("name").ascending();
+    }
+
     // Lưu sách hoặc update sách
     @Override
     public ResponseEntity<String> saveBookToStorage(SavedBookDTO book) {
-        if(isDeleted(book.getId())) return ResponseEntity.status(HttpStatus.OK).body("Deleted!");
-        if(isBookExist(book.getId())){
+        if (isDeleted(book.getId())) return ResponseEntity.status(HttpStatus.OK).body("Deleted!");
+        if (isBookExist(book.getId())) {
             updateExistingBook(book);
             return ResponseEntity.status(HttpStatus.OK).body("Updated success!");
         } else {
@@ -156,8 +198,8 @@ public class BookServiceImpl implements BookService {
     @Override
     public ResponseEntity<String> deleteBookById(String id) {
         //Kiểm tra xem sách có tồn tại hay đã bị soft delete không?
-        if(!isBookExist(id)) return ResponseEntity.status(HttpStatus.OK).body("Not found!");
-        if(isDeleted(id)) return ResponseEntity.status(HttpStatus.OK).body("Deleted!");
+        if (!isBookExist(id)) return ResponseEntity.status(HttpStatus.OK).body("Not found!");
+        if (isDeleted(id)) return ResponseEntity.status(HttpStatus.OK).body("Deleted!");
         softDeleteBookById(id);
         return ResponseEntity.status(HttpStatus.OK).body("Delete success!");
     }
@@ -166,14 +208,14 @@ public class BookServiceImpl implements BookService {
     @Override
     public ResponseEntity<?> getBookById(String id) {
         UpdatedBookDTO book = getBookByIdToUpdate(id);
-        if(book==null) return ResponseEntity.status(HttpStatus.OK).body("Not found!");
-        else return new ResponseEntity<>(book,HttpStatus.OK);
+        if (book == null) return ResponseEntity.status(HttpStatus.OK).body("Not found!");
+        else return new ResponseEntity<>(book, HttpStatus.OK);
     }
 
     // Lấy ra 3 cuốn sách bán chạy nhất
     @Override
     public List<TopSellingBooks> find3MostSoldBook(String id) {
-        return bookRepository.find3MostSoldBook(TopSellingBooks.class,id);
+        return bookRepository.find3MostSoldBook(TopSellingBooks.class, id);
     }
 
     //Lấy ra số lượng sách
@@ -191,7 +233,7 @@ public class BookServiceImpl implements BookService {
     //Lấy ra 5 thằng bán chạy nhất tại NXB
     @Override
     public List<TopSellingBooks> find5BestSellingBook(PublisherDTO publisher) {
-        return bookRepository.find5BestSellingBook(TopSellingBooks.class,publisher.getId());
+        return bookRepository.find5BestSellingBook(TopSellingBooks.class, publisher.getId());
     }
 
     //Đếm số sách của NXB
@@ -209,8 +251,8 @@ public class BookServiceImpl implements BookService {
     //Thêm sách đã bán và giảm sách hiện tại
     @Override
     public void soldBook(List<OrderDetail> orderDetails) {
-        for (OrderDetail orderDetail:orderDetails) {
-           bookRepository.addSoldBook(orderDetail.getQuantity(),orderDetail.getBook().getId());
+        for (OrderDetail orderDetail : orderDetails) {
+            bookRepository.addSoldBook(orderDetail.getQuantity(), orderDetail.getBook().getId());
         }
     }
 }

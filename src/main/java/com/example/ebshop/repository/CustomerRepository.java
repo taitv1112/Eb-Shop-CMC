@@ -1,6 +1,5 @@
 package com.example.ebshop.repository;
 
-import com.example.ebshop.dto.response.BestCustomerDTO;
 import com.example.ebshop.entity.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

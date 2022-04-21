@@ -1,8 +1,9 @@
 package com.example.ebshop.service.impl;
 
-import com.example.ebshop.dto.request.AuthorDTO;
-import com.example.ebshop.dto.response.AuthorAdnBookDTO;
 import com.example.ebshop.dto.SortForAuthor;
+import com.example.ebshop.dto.request.AuthorDTO;
+import com.example.ebshop.dto.request.SaveAuthorDTO;
+import com.example.ebshop.dto.response.AuthorAdnBookDTO;
 import com.example.ebshop.dto.response.TopSellingBooks;
 import com.example.ebshop.entity.Author;
 import com.example.ebshop.entity.OrderDetail;
@@ -14,21 +15,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
-
-import java.util.Collections;
 import java.util.List;
 
 @Service
 public class AuthorServiceImpl implements AuthorService {
     @Autowired
-    AuthorRepository authorRepository;
+    private AuthorRepository authorRepository;
 
     @Autowired
-    BookService bookService;
+    private BookService bookService;
 
     //Lưu hoặc cập nhật tác giả
     @Override
-    public ResponseEntity<String> saveAuthor(AuthorDTO authorDTO) {
+    public ResponseEntity<String> saveAuthor(SaveAuthorDTO authorDTO) {
         if (ObjectUtils.isEmpty(authorDTO)) {
             return ResponseEntity.status(HttpStatus.OK).body("Author is null!");
         }
@@ -53,7 +52,7 @@ public class AuthorServiceImpl implements AuthorService {
 
     //Cập nhật tác giả
     @Override
-    public ResponseEntity<String> updateAuthor(AuthorDTO authorDTO) {
+    public ResponseEntity<String> updateAuthor(SaveAuthorDTO authorDTO) {
         return saveAuthor(authorDTO);
     }
 
@@ -82,5 +81,10 @@ public class AuthorServiceImpl implements AuthorService {
         for (OrderDetail orderDetail : orderDetails) {
             authorRepository.soldBook(orderDetail.getQuantity(),orderDetail.getBook().getAuthor().getId());
         }
+    }
+
+    @Override
+    public Author findById(String id) {
+        return authorRepository.findById(id).get();
     }
 }

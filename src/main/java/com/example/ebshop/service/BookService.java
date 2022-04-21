@@ -7,6 +7,9 @@ import com.example.ebshop.dto.response.PublisherDTO;
 import com.example.ebshop.dto.response.TopSellingBooks;
 import com.example.ebshop.entity.Book;
 import com.example.ebshop.entity.OrderDetail;
+import com.example.ebshop.specification.model.PageType;
+import com.example.ebshop.specification.model.Search;
+import com.example.ebshop.specification.model.SortType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -31,4 +34,5 @@ public interface BookService {
     ResponseEntity<?> tenBestSellingBook();
     Long getTotalNumberOfSoldBookById(String id);
     Long getSoldBookByPublisherId(String id);
+    ResponseEntity<?> search(Search search, SortType sortType, PageType pageType);
 }
