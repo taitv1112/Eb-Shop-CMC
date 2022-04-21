@@ -8,7 +8,6 @@ import com.example.ebshop.entity.OrderDetail;
 import com.example.ebshop.entity.Orders;
 import com.example.ebshop.repository.OrdersRepository;
 import com.example.ebshop.service.*;
-import com.example.ebshop.service.generateId.GenerateRandomId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +16,7 @@ import org.springframework.util.ObjectUtils;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class OrderServiceImpl implements OrdersService {
@@ -63,7 +63,7 @@ public class OrderServiceImpl implements OrdersService {
         String generatedString;
         BigDecimal totalPrice = new BigDecimal("0");
         do {
-            generatedString = GenerateRandomId.generate();
+            generatedString = UUID.randomUUID().toString();
         }
         while (ordersRepository.existsById(generatedString));
         for (OrderDetail orderDetail : orderDetails) {

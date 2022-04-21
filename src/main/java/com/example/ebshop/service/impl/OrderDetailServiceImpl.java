@@ -5,11 +5,11 @@ import com.example.ebshop.entity.OrderDetail;
 import com.example.ebshop.repository.OrderDetailRepository;
 import com.example.ebshop.service.BookService;
 import com.example.ebshop.service.OrderDetailService;
-import com.example.ebshop.service.generateId.GenerateRandomId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class OrderDetailServiceImpl implements OrderDetailService {
@@ -25,7 +25,7 @@ public class OrderDetailServiceImpl implements OrderDetailService {
         for (OrderDetailDTO orderDTO : orderDetailsDTO) {
             String generatedString;
             do{
-             generatedString = GenerateRandomId.generate();
+             generatedString =  UUID.randomUUID().toString();
             }
             while(orderDetailRepository.existsById(generatedString));
             OrderDetail orderDetail = new OrderDetail(generatedString,bookService.findBookById(orderDTO.getBook().getId()),orderDTO.getQuantity());

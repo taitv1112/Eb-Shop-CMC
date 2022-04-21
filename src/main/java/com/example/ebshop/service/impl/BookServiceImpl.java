@@ -13,7 +13,6 @@ import com.example.ebshop.repository.BookRepository;
 import com.example.ebshop.service.AuthorService;
 import com.example.ebshop.service.BookService;
 import com.example.ebshop.service.PublisherService;
-import com.example.ebshop.service.generateId.GenerateRandomId;
 import com.example.ebshop.specification.model.PageType;
 import com.example.ebshop.specification.model.Search;
 import com.example.ebshop.specification.model.SortType;
@@ -28,6 +27,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class BookServiceImpl implements BookService {
@@ -74,7 +74,7 @@ public class BookServiceImpl implements BookService {
         if (newBook.getId() == null) {
             String generatedString;
             do {
-                generatedString = GenerateRandomId.generate();
+                generatedString = UUID.randomUUID().toString();
             }
             while (bookRepository.existsById(generatedString));
             book.setId(generatedString);
