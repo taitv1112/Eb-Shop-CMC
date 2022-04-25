@@ -25,7 +25,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -36,11 +38,11 @@ public class BookServiceImpl implements BookService {
 
     @Lazy
     @Autowired
-    AuthorService authorService;
+    private AuthorService authorService;
 
     @Lazy
     @Autowired
-    PublisherService publisherService;
+    private PublisherService publisherService;
 
     // lưu lại sách
     @Transactional
@@ -161,8 +163,19 @@ public class BookServiceImpl implements BookService {
     public ResponseEntity<?> search(Search search, SortType sortType, PageType pageType) {
         BookSpecificationBuilder builder = new BookSpecificationBuilder(search);
         Sort sort = sortBy(sortType);
-        Page<BookDetailsDTO> book = bookRepository.findAllExceptDeletedBook(BookDetailsDTO.class, builder.build(), PageRequest.of(pageType.getPage(), pageType.getSize(), sort));
-        return ResponseEntity.status(HttpStatus.OK).body(book);
+        if(builder.build()==null){
+            return ResponseEntity.status(HttpStatus.OK).body("Please fill something!");
+        }
+        Page<Book> books = bookRepository.findAll(builder.build(), PageRequest.of(pageType.getPage(), pageType.getSize(), sort));
+        List<BookDetailsDTO> listDTO = new ArrayList<>();
+        for (Book book:books.getContent()) {
+            BookDetailsDTO bookDetailsDTO = new BookDetailsDTO(
+                    book.getId(), book.getName(), new BookDetailsDTO.AuthorDTO(book.getAuthor().getId(),book.getAuthor().getName()),
+                    new BookDetailsDTO.PublisherDTO(book.getPublisher().getId(), book.getPublisher().getName()),
+                    book.getQuantityCurrent(),book.getPrice());
+            listDTO.add(bookDetailsDTO);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(listDTO);
     }
 
     private Sort sortBy(SortType sortType) {

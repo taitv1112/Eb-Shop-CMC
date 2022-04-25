@@ -1,6 +1,7 @@
 package com.example.ebshop.repository;
 
 import com.example.ebshop.entity.Book;
+import jdk.nashorn.internal.objects.annotations.SpecializedFunction;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -56,7 +57,4 @@ public interface BookRepository extends JpaRepository<Book, String>, JpaSpecific
 
     @Query("select b.quantitySold from Book b where b.publisher.id = ?1")
     List<Long> findQuantitySoldBookByPublisherId(String id);
-
-    @Query("select b from Book b where b.deleted=false")
-    <T>Page<T> findAllExceptDeletedBook(Class<T> classType,Specification<Book> build,Pageable page);
 }

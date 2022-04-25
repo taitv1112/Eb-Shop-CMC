@@ -8,6 +8,9 @@ public class SearchCriteria {
     private String operator;
     private Object value;
 
+    public SearchCriteria() {
+    }
+
     public SearchCriteria(String key, String operator, Object value) {
         this.key = key;
         this.operator = operator;
