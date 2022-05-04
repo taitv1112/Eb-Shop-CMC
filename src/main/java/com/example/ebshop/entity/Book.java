@@ -21,4 +21,23 @@ public class Book {
     private String status;
     private Long quantityCurrent;
     private Long quantitySold;
+
+    public Book(String id) {
+        this.id = id;
+    }
+
+    public Book() {
+    }
+
+    public Book(String id, String name, Author author, Publisher publisher, BigDecimal price, Date publishedYear, String status, Long quantityCurrent, Long quantitySold) {
+        this.id = id;
+        this.name = name;
+        this.author = author;
+        this.publisher = publisher;
+        this.price = price;
+        this.publishedYear = publishedYear;
+        this.status = status;
+        this.quantityCurrent = quantityCurrent;
+        this.quantitySold = quantitySold;
+    }
 }

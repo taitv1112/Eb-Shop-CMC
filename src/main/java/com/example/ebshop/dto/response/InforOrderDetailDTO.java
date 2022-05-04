@@ -11,4 +11,6 @@ public interface InforOrderDetailDTO {
      String getPublishName();
      BigDecimal getPrice();
      Long getQuantity();
+
+
 }
